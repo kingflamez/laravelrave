@@ -78,6 +78,7 @@ class Rave {
         return $this;
     }
     
+    
     /**
      * Generates a checksum value for the information to be sent to the payment gateway
      * @return object
