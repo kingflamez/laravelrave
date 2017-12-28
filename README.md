@@ -111,13 +111,14 @@ The request will contain the following parameters.
 - ref `Your transaction reference. It must be unique per transaction.  By default, the Rave class generates a unique transaction reference for each transaction. Pass this parameter only if you uncommented the related section in the script below.`
 
 
-#### Setup Routes
+#### 1. Setup Routes
+
 ```php
 Route::post('/pay', 'RaveController@initialize')->name('pay');
 Route::post('/rave/callback', 'RaveController@callback')->name('callback');
 ```
 
-#### Grant CSRF Access to Rave Callback
+#### 2. Grant CSRF Access to Rave Callback
 Go to `app/Http/Middleware/VerifyCsrfToken.php` and add your callback url to the `$except` array
 
 ```php
@@ -150,97 +151,26 @@ A sample form will look like so:
 </form>
 ```
 
-#### Setup your Controller
-> Class documentation can be found here [https://flutterwave.github.io/Flutterwave-Rave-PHP-SDK/packages/Default.html](https://flutterwave.github.io/Flutterwave-Rave-PHP-SDK/packages/Default.html)
+#### 3. Setup your Event Handler
+>This is where you set how you want to handle the transaction at different stages. You can store this anywhere. As for me, I created an `Interfaces` folder in the `app/` directory.  Location: `app/Interfaces/PaymentEventHandler.php`
+
+![PaymentEventHandler Directory](https://raw.githubusercontent.com/kingflamez/laravelrave/master/resources/img/RaveInterface.jpg)
+
+>Copy and paste the methods and replace with your actions for each event
 
 ```php
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Interfaces;
 
-use Illuminate\Http\Request;
-
-//import the Rave Class and the Rave Event Handler Interface
-use KingFlamez\Rave\Rave;
+//use the Rave Event Handler Interface
 use KingFlamez\Rave\RaveEventHandlerInterface;
-
-class RaveController extends Controller
-{
-    public function initialize()
-    {
-        $prefix = 'MY_COMPANY_NAME'; // Change this to the name of your business or app
-        $overrideRef = false;
-
-        // Uncomment here to enforce the useage of your own ref else a ref will be generated for you automatically
-        // if(request()->ref){
-        //     $prefix = request()->ref;
-        //     $overrideRef = true;
-        // }
-
-        //Initialize Rave class
-        $rave = new Rave($prefix, $overrideRef);
-
-        $rave
-        ->eventHandler(new myEventHandler)
-        ->setAmount(request()->amount)
-        ->setPaymentMethod(request()->payment_method) // value can be card, account or both
-        ->setDescription(request()->description)
-        ->setLogo(request()->logo) // This might not be included if you have it set in your .env file
-        ->setTitle(request()->title) // This can be left blank if you have it set in your .env file
-        ->setCountry(request()->country)
-        ->setCurrency(request()->currency)
-        ->setEmail(request()->email)
-        ->setFirstname(request()->firstname)
-        ->setLastname(request()->lastname)
-        ->setPhoneNumber(request()->phonenumber)
-        ->setPayButtonText(request()->pay_button_text)
-        ->setRedirectUrl(route('callback'))
-        // ->setMetaData(array('metaname' => 'SomeDataName', 'metavalue' => 'SomeValue')) // can be called multiple times. Uncomment this to add meta datas
-        // ->setMetaData(array('metaname' => 'SomeOtherDataName', 'metavalue' => 'SomeOtherValue')) // can be called multiple times. Uncomment this to add meta datas
-        // ->setMetaData(array('metaname' => 'color', 'metavalue' => 'Blue')) // can be called multiple times. Example. Uncomment this to add meta datas
-        ->initialize();
-    }
-
-    /**
-     * Obtain Rave callback information
-     * @return void
-     */
-    public function callback()
-    {
-        $prefix = 'MY_COMPANY_NAME';
-
-        $rave = new Rave($prefix);
-        if(request()->cancelled && request()->txref){
-            // Handle canceled payments
-            $rave
-            ->eventHandler(new myEventHandler)
-            ->requeryTransaction(request()->txref)
-            ->paymentCanceled(request()->txref);
-        }elseif(request()->txref && request()->flwref){
-            // Handle completed payments   
-
-            //$order = Order::where('referenceNumber', request()->txref)->first();
-            //$amount = $order->amount
-            //$currency = $order->currency
-
-            $amount = 30000.75; //Fetch amount of the order or product from your server eg with eloquent
-            $currency = "NGN"; //Fetch amount of the order or product from your server eg with eloquent
-
-            $rave
-            ->eventHandler(new myEventHandler)
-            ->requeryTransaction(request()->txref)
-            ->verifyTransfer($amount, $currency);
-        }else{
-            echo 'Stop!!! Please pass the txref parameter!';
-        }
-    }
-}
 
 // This is where you set how you want to handle the transaction at different stages
 //This can be created in a seperate class and use it in this controller
 //eg use myEventHandler
 
-class myEventHandler implements RaveEventHandlerInterface{
+class PaymentEventHandler implements RaveEventHandlerInterface{
     /**
      * This is called when the Rave class is initialized
      * */
@@ -338,17 +268,130 @@ class myEventHandler implements RaveEventHandlerInterface{
         echo 'Payment timeout......'.$transactionReference.' - '.json_encode($data).'<br />'; //Remember to delete this line
     }
 }
-
-
 ```
-You can also find the class documentation in the docs folder. There you will find documentation for the `Rave` class and the `EventHandlerInterface`.
+
+#### 4. Setup your Controller
+> Class documentation can be found here [https://flutterwave.github.io/Flutterwave-Rave-PHP-SDK/packages/Default.html](https://flutterwave.github.io/Flutterwave-Rave-PHP-SDK/packages/Default.html)
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+//import the Rave Class and your Payment Event Handler
+use KingFlamez\Rave\Rave;
+use App\Interfaces\PaymentEventHandler;
+
+class RaveController extends Controller
+{
+    public function initialize()
+    {
+        $prefix = 'MY_COMPANY_NAME'; // Change this to the name of your business or app
+        $overrideRef = false;
+
+        // Uncomment here to enforce the useage of your own ref else a ref will be generated for you automatically
+        // if(request()->ref){
+        //     $prefix = request()->ref;
+        //     $overrideRef = true;
+        // }
+
+        //Initialize Rave class
+        $rave = new Rave($prefix, $overrideRef);
+
+        $rave
+        ->eventHandler(new PaymentEventHandler)
+        ->setAmount(request()->amount)
+        ->setPaymentMethod(request()->payment_method) // value can be card, account or both
+        ->setDescription(request()->description)
+        ->setLogo(request()->logo) // This might not be included if you have it set in your .env file
+        ->setTitle(request()->title) // This can be left blank if you have it set in your .env file
+        ->setCountry(request()->country)
+        ->setCurrency(request()->currency)
+        ->setEmail(request()->email)
+        ->setFirstname(request()->firstname)
+        ->setLastname(request()->lastname)
+        ->setPhoneNumber(request()->phonenumber)
+        ->setPayButtonText(request()->pay_button_text)
+        ->setRedirectUrl(route('callback'))
+        // ->setMetaData(array('metaname' => 'SomeDataName', 'metavalue' => 'SomeValue')) // can be called multiple times. Uncomment this to add meta datas
+        // ->setMetaData(array('metaname' => 'SomeOtherDataName', 'metavalue' => 'SomeOtherValue')) // can be called multiple times. Uncomment this to add meta datas
+        // ->setMetaData(array('metaname' => 'color', 'metavalue' => 'Blue')) // can be called multiple times. Example. Uncomment this to add meta datas
+        ->initialize();
+    }
+
+    /**
+     * Obtain Rave callback information
+     * @return void
+     */
+    public function callback()
+    {
+        $prefix = 'MY_COMPANY_NAME';
+
+        $rave = new Rave($prefix);
+        if(request()->cancelled && request()->txref){
+            // Handle canceled payments
+            $rave
+            ->eventHandler(new PaymentEventHandler)
+            ->requeryTransaction(request()->txref)
+            ->paymentCanceled(request()->txref);
+        }elseif(request()->txref && request()->flwref){
+            // Handle completed payments   
+
+            //$order = Order::where('referenceNumber', request()->txref)->first();
+            //$amount = $order->amount
+            //$currency = $order->currency
+
+            $amount = 30000.75; //Fetch amount of the order or product from your server eg with eloquent
+            $currency = "NGN"; //Fetch amount of the order or product from your server eg with eloquent
+
+            $rave
+            ->eventHandler(new PaymentEventHandler)
+            ->requeryTransaction(request()->txref)
+            ->verifyTransaction($amount, $currency);
+        }else{
+            echo 'Stop!!! Please pass the txref parameter!';
+        }
+    }
+}
+```
+You can also find the class documentation in the docs folder. There you will find documentation for the [`Rave`](https://github.com/Flutterwave/Flutterwave-Rave-PHP-SDK/tree/master/docs) class and the `EventHandlerInterface`.
+
+>Test Card
+
+```bash
+5438898014560229
+cvv 789
+Expiry Month 09
+Expiry Year 19
+Pin 3310
+otp 12345
+```
+
+>Test Bank Account
+
+```bash
+Access Bank
+Account number: 0690000004
+otp: 12345
+```
+
+```bash
+Providus Bank
+Account number: 5900102340, 5900002567
+otp: 12345
+```
+
+[More Test Cards](https://flutterwavedevelopers.readme.io/docs/test-cards)
+[More Test Bank Accounts](https://flutterwavedevelopers.readme.io/docs/test-bank-accounts)
 
 ## ToDo
 
-- Write Unit Test
-- Support Direct Charges
-- Support Tokenized payment
-
+ - Write Unit Test
+ - Support Direct Charges
+ - Support Tokenized payment
+ - Recurring Payment
 
 ## Contributing
 Please feel free to fork this package and contribute by submitting a pull request to enhance the functionalities. I will appreciate that a lot. I'm a newbie. I will appreciate a lot of stars.

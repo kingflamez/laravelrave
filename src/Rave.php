@@ -481,7 +481,7 @@ class Rave {
     * @return boolean
     **/
 
-    public function verifyTransfer($amount, $currency)
+    public function verifyTransaction($amount, $currency)
     {
         // Handle completed payments
         
