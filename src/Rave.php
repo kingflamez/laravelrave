@@ -444,13 +444,13 @@ class Rave {
                 }
             }elseif($response->body && $response->body->data && $response->body->data->status === "failed"){
                 // Handle Failure
-                Log::warn('Requeryed a failed transaction....'.json_encode($response->body->data));
+                Log::warning('Requeryed a failed transaction....'.json_encode($response->body->data));
                 if(isset($this->handler)){
                     $this->handler->onFailure($response->body->data);
                 }
             }else{
                 // Handled an undecisive transaction. Probably timed out.
-                Log::warn('Requeryed an undecisive transaction....'.json_encode($response->body->data));
+                Log::warning('Requeryed an undecisive transaction....'.json_encode($response->body->data));
                 // I will requery again here. Just incase we have some devs that cannot setup a queue for requery. I don't like this.
                 if($this->requeryCount > 4){
                     // Now you have to setup a queue by force. We couldn't get a status in 5 requeries.
@@ -465,7 +465,7 @@ class Rave {
                 }
             }
         }else{
-            Log::warn('Requery call returned error for transaction reference.....'.json_encode($response->body).'Transaction Reference: '. $this->txref);
+            Log::warning('Requery call returned error for transaction reference.....'.json_encode($response->body).'Transaction Reference: '. $this->txref);
             // Handle Requery Error
             if(isset($this->handler)){
                 $this->handler->onRequeryError($response->body);
