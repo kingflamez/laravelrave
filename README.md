@@ -152,18 +152,22 @@ A sample form will look like so:
 ```
 
 #### 3. Setup your Event Handler
->This is where you set how you want to handle the transaction at different stages. You can store this anywhere. As for me, I created an `Interfaces` folder in the `app/` directory.  Location: `app/Interfaces/PaymentEventHandler.php`
+>This is where you set how you want to handle the transaction at different stages. You can store this anywhere. As for me, I created an `Events` folder in the `app/` directory.  Location: `app/Events/PaymentEventHandler.php`. You can have different event handler
 
 <p align="center">
- <img src="https://raw.githubusercontent.com/kingflamez/laravelrave/master/resources/img/RaveInterface.jpg" style="height: 100px" alt="PaymentEventHandler Directory"/>
+ <img src="https://raw.githubusercontent.com/kingflamez/laravelrave/master/resources/img/RaveInterface.jpg" style="height: 100px" alt="Events Directory with different classes implementing the RaveEventHandlerInterface"/>
 </p>
 
+<p align="center">Events Directory with different event handler classes implementing the RaveEventHandlerInterface</p>
+
 >Copy and paste the methods and replace with your actions for each event
+
+#### Example
 
 ```php
 <?php
 
-namespace App\Interfaces;
+namespace App\Events;
 
 //use the Rave Event Handler Interface
 use KingFlamez\Rave\RaveEventHandlerInterface;
@@ -273,18 +277,22 @@ class PaymentEventHandler implements RaveEventHandlerInterface{
 ```
 
 #### 4. Setup your Controller
+> Setup your controller to handle the routes. I created the `RaveController`. Use the `Rave`
+class from `KingFlamez\Rave\Rave` and also your payment event handler, I chose `App\Events\PaymentEventHandler`. Initiate the Rave class and use the methods needed.
+
 > Class documentation can be found here [https://flutterwave.github.io/Flutterwave-Rave-PHP-SDK/packages/Default.html](https://flutterwave.github.io/Flutterwave-Rave-PHP-SDK/packages/Default.html)
+
+#### Example
 
 ```php
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
 //import the Rave Class and your Payment Event Handler
 use KingFlamez\Rave\Rave;
-use App\Interfaces\PaymentEventHandler;
+use App\Events\PaymentEventHandler;
 
 class RaveController extends Controller
 {
@@ -420,6 +428,11 @@ For [More Test Bank Accounts](https://flutterwavedevelopers.readme.io/docs/test-
  - Support Tokenized payment
  - Recurring Payment
 
+
+## Credits
+
+- [Oluwole Adebiyi (Flamez)][link-author]
+
 ## Contributing
 Please feel free to fork this package and contribute by submitting a pull request to enhance the functionalities. I will appreciate that a lot. I'm a newbie. I will appreciate a lot of stars.
 
@@ -430,15 +443,6 @@ Kindly star the GitHub repo and share ❤️.  I ❤️ Flutterwave
 
 Kindly [follow me on twitter](https://twitter.com/mrflamez_)!
 
-
-## License
-
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-
-## Credits
-
-- [Oluwole Adebiyi (Flamez)][link-author]
 
 ## License
 
