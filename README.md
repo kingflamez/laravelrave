@@ -419,18 +419,10 @@ Kindly [follow me on twitter](https://twitter.com/mrflamez_)!
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) and [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md) for details.
-
-## Security
-
-If you discover any security related issues, please email flamekeed@gmail.com instead of using the issue tracker.
 
 ## Credits
 
 - [Oluwole Adebiyi (Flamez)][link-author]
-- [All Contributors][link-contributors]
 
 ## License
 
