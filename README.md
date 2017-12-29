@@ -1,8 +1,8 @@
 # Flutterwave Rave (Laravel 5 Package)
 
-<!-- [![Latest Version on Packagist][ico-version]][link-packagist]
+[![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
-[![Total Downloads][ico-downloads]][link-downloads] -->
+[![Total Downloads][ico-downloads]][link-downloads]
 
 > Implement Flutterwave Rave payment gateway easily with Laravel
 
@@ -14,10 +14,10 @@ Go to [Flutterwave Rave](https://ravepay.co) to get your public and private key
 
 To get the latest version of Flutterwave Rave for Laravel, simply use composer
 
-```
+```bash
 composer require kingflamez/laravelrave
 ```
-For Larvel => 5.5, skip this step and go to [`configuration`](https://github.com/kingflamez/laravelrave#configuration)
+For **Larvel => 5.5**, skip this step and go to [**`configuration`**](https://github.com/kingflamez/laravelrave#configuration)
 
 Once Flutterwave Rave for Laravel is installed, you need to register the service provider. Open up `config/app.php` and add the following to the `providers` key.
 
@@ -27,7 +27,7 @@ Once Flutterwave Rave for Laravel is installed, you need to register the service
      * Package Service Providers...
      */
     ...
-    `KingFlamez\Rave\RaveServiceProvider::class`
+    KingFlamez\Rave\RaveServiceProvider::class,
     ...
 ]
 ```
@@ -40,7 +40,7 @@ Publish the configuration file using this command:
 php artisan vendor:publish --provider="KingFlamez\Rave\RaveServiceProvider"
 ```
 
-A configuration-file named `rave.php` will be placed in your `config` directory:
+A configuration-file named **`rave.php`** will be placed in your **`config`** directory:
 
 ```php
 <?php
@@ -154,7 +154,9 @@ A sample form will look like so:
 #### 3. Setup your Event Handler
 >This is where you set how you want to handle the transaction at different stages. You can store this anywhere. As for me, I created an `Interfaces` folder in the `app/` directory.  Location: `app/Interfaces/PaymentEventHandler.php`
 
-![PaymentEventHandler Directory](https://raw.githubusercontent.com/kingflamez/laravelrave/master/resources/img/RaveInterface.jpg)
+<p align="center">
+ <img src="https://raw.githubusercontent.com/kingflamez/laravelrave/master/resources/img/RaveInterface.jpg" style="height: 100px" alt="PaymentEventHandler Directory"/>
+</p>
 
 >Copy and paste the methods and replace with your actions for each event
 
@@ -358,6 +360,15 @@ class RaveController extends Controller
 ```
 You can also find the class documentation in the docs folder. There you will find documentation for the [`Rave`](https://github.com/Flutterwave/Flutterwave-Rave-PHP-SDK/tree/master/docs) class and the `EventHandlerInterface`.
 
+### Payment
+<p align="center">
+ <img src="https://raw.githubusercontent.com/kingflamez/laravelrave/master/resources/img/pay.jpg" alt="Pay page"/>
+</p>
+
+<p align="center">
+ <img src="https://raw.githubusercontent.com/kingflamez/laravelrave/master/resources/img/rave.jpg" alt="Pay page"/>
+</p>
+
 >Test Card
 
 ```bash
@@ -383,8 +394,8 @@ Account number: 5900102340, 5900002567
 otp: 12345
 ```
 
-[More Test Cards](https://flutterwavedevelopers.readme.io/docs/test-cards)
-[More Test Bank Accounts](https://flutterwavedevelopers.readme.io/docs/test-bank-accounts)
+For [More Test Cards](https://flutterwavedevelopers.readme.io/docs/test-cards)
+For [More Test Bank Accounts](https://flutterwavedevelopers.readme.io/docs/test-bank-accounts)
 
 ## ToDo
 
@@ -407,3 +418,35 @@ Kindly [follow me on twitter](https://twitter.com/mrflamez_)!
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
+## Contributing
+
+Please see [CONTRIBUTING](CONTRIBUTING.md) and [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md) for details.
+
+## Security
+
+If you discover any security related issues, please email flamekeed@gmail.com instead of using the issue tracker.
+
+## Credits
+
+- [Oluwole Adebiyi (Flamez)][link-author]
+- [All Contributors][link-contributors]
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
+[ico-version]: https://img.shields.io/packagist/v/kingflamez/laravelrave.svg?style=flat-square
+[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/kingflamez/laravelrave/master.svg?style=flat-square
+[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/kingflamez/laravelrave.svg?style=flat-square
+[ico-code-quality]: https://img.shields.io/scrutinizer/g/kingflamez/laravelrave.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/kingflamez/laravelrave.svg?style=flat-square
+
+[link-packagist]: https://packagist.org/packages/kingflamez/laravelrave
+[link-travis]: https://travis-ci.org/kingflamez/laravelrave
+[link-scrutinizer]: https://scrutinizer-ci.com/g/kingflamez/laravelrave/code-structure
+[link-code-quality]: https://scrutinizer-ci.com/g/kingflamez/laravelrave
+[link-downloads]: https://packagist.org/packages/kingflamez/laravelrave
+[link-author]: https://github.com/kingflamez
+[link-contributors]: ../../contributors

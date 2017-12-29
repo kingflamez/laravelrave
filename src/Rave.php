@@ -489,6 +489,9 @@ class Rave {
         $amount = $amount; //Correct Amount from Server
         $currency = $currency; //Correct Currency from Server
 
+
+        Log::notice('Payment verification started of '.$ref);
+
         $query = array(
             "SECKEY" => Config::get('rave.secretKey'),
             "flw_ref" => $ref,
@@ -524,7 +527,7 @@ class Rave {
             }
         }
         else {
-            Log::notice('Payment verification failed...'.json_encode($resp['data']));
+            Log::warning('Payment verification failed...'.json_encode($resp['data']));
             if(isset($this->handler)){
                 $this->handler->onVerificationFailed($resp['data']);
             }
