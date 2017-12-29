@@ -80,7 +80,7 @@ return [
 ```
 ## Usage
 
-Open your .env file and add your public key, secret key, merchant email and payment url like so:
+Open your .env file and add your public key, secret key, environment variable and logo url like so:
 
 ```php
 RAVE_PUBLIC_KEY=FLWPUBK-xxxxxxxxxxxxxxxxxxxxx-X
