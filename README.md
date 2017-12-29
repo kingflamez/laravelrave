@@ -169,9 +169,9 @@ namespace App\Interfaces;
 use KingFlamez\Rave\RaveEventHandlerInterface;
 
 // This is where you set how you want to handle the transaction at different stages
-//This can be created in a seperate class and use it in this controller
-//eg use myEventHandler
+// You can have multiple Event Handler for different purposes of payments
 
+//This class should implement  the RaveEventHandlerInterface and take all the methods
 class PaymentEventHandler implements RaveEventHandlerInterface{
     /**
      * This is called when the Rave class is initialized
@@ -291,16 +291,24 @@ class RaveController extends Controller
     public function initialize()
     {
         $prefix = 'MY_COMPANY_NAME'; // Change this to the name of your business or app
-        $overrideRef = false;
+        $overrideRefWithPrefix = false;
 
         // Uncomment here to enforce the useage of your own ref else a ref will be generated for you automatically
         // if(request()->ref){
         //     $prefix = request()->ref;
-        //     $overrideRef = true;
+        //     $overrideRefWithPrefix = true;
         // }
 
-        //Initialize Rave class
-        $rave = new Rave($prefix, $overrideRef);
+
+        /**
+         * Initialize Rave class
+         * @param string $prefix This is added to the front of your transaction reference numbers
+         * @param boolean $overrideRefWithPrefix Set this parameter to true to use your prefix as the transaction reference
+         * default - $overrideRefWithPrefix = false
+         * @return object
+         * */
+
+        $rave = new Rave($prefix, $overrideRefWithPrefix);
 
         $rave
         ->eventHandler(new PaymentEventHandler)
@@ -330,6 +338,14 @@ class RaveController extends Controller
     public function callback()
     {
         $prefix = 'MY_COMPANY_NAME';
+
+        /**
+         * Initialize Rave class
+         * @param string $prefix This is added to the front of your transaction reference numbers
+         * @param boolean $overrideRefWithPrefix Set this parameter to true to use your prefix as the transaction reference
+         * default - $overrideRefWithPrefix = false
+         * @return object
+         * */
 
         $rave = new Rave($prefix);
         if(request()->cancelled && request()->txref){
