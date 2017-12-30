@@ -272,11 +272,11 @@ class RaveController extends Controller
         ***$overrideRefWithPrefix - either true/false. True will override the autogenerate reference with $prefix/request()->ref while false will use the $prefix as your prefix
         **/
 
-        //Rave::setKeys($publicKey, $secretKey)->setEnvironment($env)->setPrefix($prefix, $overrideRefWithPrefix=false)->initialize(route('callback'));
+        //Rave::eventHandler(new PaymentEventHandler)->setKeys($publicKey, $secretKey)->setEnvironment($env)->setPrefix($prefix, $overrideRefWithPrefix=false)->initialize(route('callback'));
 
-        //eg: Rave::setEnvironment('live')->setPrefix("flamez")->initialize(route('callback'));
-        //eg: Rave::setKeys("PWHNNJ992838uhzjhjshud", "PWHNNJ992838uhzjhjshud")->setPrefix(request()->ref, true)->initialize(route('callback'));
-        //eg: Rave::setKeys("PWHNNJ992838uhzjhjshud, "PWHNNJ992838uhzjhjshud")->setEnvironment('staging')->setPrefix("rave", false)->initialize(route('callback'));
+        //eg: Rave::eventHandler(new PaymentEventHandler)->setEnvironment('live')->setPrefix("flamez")->initialize(route('callback'));
+        //eg: Rave::eventHandler(new PaymentEventHandler)->setKeys("PWHNNJ992838uhzjhjshud", "PWHNNJ992838uhzjhjshud")->setPrefix(request()->ref, true)->initialize(route('callback'));
+        //eg: Rave::eventHandler(new PaymentEventHandler)->setKeys("PWHNNJ992838uhzjhjshud, "PWHNNJ992838uhzjhjshud")->setEnvironment('staging')->setPrefix("rave", false)->initialize(route('callback'));
     }
 
     /**
