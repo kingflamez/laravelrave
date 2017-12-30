@@ -478,7 +478,7 @@ class Rave {
                 if(isset($this->handler)){
                     $this->handler->onSuccessful($response->body->data);
                 }else{
-                    return $response;
+                    return $response->body->data;
                 }
             }elseif($response->body && $response->body->data && $response->body->data->status === "failed"){
                 // Handle Failure
@@ -486,7 +486,7 @@ class Rave {
                 if(isset($this->handler)){
                     $this->handler->onFailure($response->body->data);
                 }else{
-                    return $response;
+                    return $response->body->data;
                 }
             }else{
                 // Handled an undecisive transaction. Probably timed out.
