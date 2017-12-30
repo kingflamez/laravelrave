@@ -9,11 +9,10 @@ namespace KingFlamez\Rave;
  * An event can be triggered when a Rave initializes a transaction, When a 
  * transaction is successful, failed, requeried and when a requery fails.
  * @author Olufemi Olanipekun <iolufemi@ymail.com>
- * @author Oluwole Adebiyi <flamekeed@gmail.com>
  * @version 1.0
  **/
 
-interface RaveEventHandlerInterface{
+interface RaveEventHandlerInterface {
     /**
      * This is called when the a transaction is initialized
      * @param object $initializationData This is the initial transaction data as passed
@@ -49,18 +48,6 @@ interface RaveEventHandlerInterface{
      * @param string $transactionReference This is the transaction reference as returned from the Rave payment gateway
      * */
     function onCancel($transactionReference);
-    
-    /**
-     * This is called when a transaction is successfully verified
-     * @param string $requeryResponse This is the success response gotten from the Rave payment gateway verification call
-     * */
-    function onVerificationSuccess($requeryResponse);
-    
-    /**
-     * This is called when a transaction failed verification
-     * @param string $requeryResponse This is the failed response gotten from the Rave payment gateway verification call
-     * */
-    function onVerificationFailed($requeryResponse);
     
     /**
      * This is called when a transaction doesn't return with a success or a failure response.

@@ -17,7 +17,7 @@ To get the latest version of Flutterwave Rave for Laravel, simply use composer
 ```bash
 composer require kingflamez/laravelrave
 ```
-For **Larvel => 5.5**, skip this step and go to [**`configuration`**](https://github.com/kingflamez/laravelrave#configuration)
+For **`Laravel => 5.5`**, skip this step and go to [**`configuration`**](https://github.com/kingflamez/laravelrave#configuration)
 
 Once Flutterwave Rave for Laravel is installed, you need to register the service provider. Open up `config/app.php` and add the following to the `providers` key.
 
@@ -28,6 +28,16 @@ Once Flutterwave Rave for Laravel is installed, you need to register the service
      */
     ...
     KingFlamez\Rave\RaveServiceProvider::class,
+    ...
+]
+```
+
+Also add this to the `aliases`
+
+```php
+'aliases' => [
+    ...
+    'Rave' => KingFlamez\Rave\Facades\Rave::class,
     ...
 ]
 ```
@@ -88,6 +98,7 @@ RAVE_SECRET_KEY=FLWSECK-xxxxxxxxxxxxxxxxxxxxx-X
 RAVE_TITLE="ABC Company"
 RAVE_ENVIRONMENT="staging"
 RAVE_LOGO="https://pbs.twimg.com/profile_images/915859962554929153/jnVxGxVj.jpg"
+RAVE_PREFIX="rave"
 ```
 RAVE_ENVIRONMENT can be staging or live 
 
@@ -151,8 +162,146 @@ A sample form will look like so:
 </form>
 ```
 
-#### 3. Setup your Event Handler
->This is where you set how you want to handle the transaction at different stages. You can store this anywhere. As for me, I created an `Events` folder in the `app/` directory.  Location: `app/Events/PaymentEventHandler.php`. You can have different event handler
+#### 3.1 Setup your Controller
+> Setup your controller to handle the routes. I created the `RaveController`. Use the `Rave`
+facade. 
+
+#### Example
+
+```php
+<?php
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+//use the Rave Facade
+use Rave;
+
+class RaveController extends Controller
+{
+
+    /**
+     * Initialize Rave payment process
+     * @return void
+     */
+    public function initialize()
+    {
+        //This initializes payment and redirects to the payment gateway
+        //The initialize method takes the parameter of the redirect URL
+        Rave::initialize(route('callback'));
+
+        /***
+        *For more functionality you can use more methods like the one below
+        *setKeys($publicKey, $secretKey) - This is used to set the puvlic and secret key incase you wat to use another one different from your .env
+        *setEnvironment($env) - This is used to set to either staging or live incase you want to use something different from your .env
+        *
+        *setPrefix($prefix, $overrideRefWithPrefix=false) - 
+        ***$prefix - To add prefix to your transaction reference eg. KC will lead to KC_hjdjghddhgd737
+        ***$overrideRefWithPrefix - either true/false. True will override the autogenerate reference with $prefix/request()->ref while false will use the $prefix as your prefix
+        **/
+
+        //Rave::setKeys($publicKey, $secretKey)->setEnvironment($env)->setPrefix($prefix, $overrideRefWithPrefix=false)->initialize(route('callback'));
+
+        //eg: Rave::setEnvironment('live')->setPrefix("flamez")->initialize(route('callback'));
+        //eg: Rave::setKeys("PWHNNJ992838uhzjhjshud", "PWHNNJ992838uhzjhjshud")->setPrefix(request()->ref, true)->initialize(route('callback'));
+        //eg: Rave::setKeys("PWHNNJ992838uhzjhjshud, "PWHNNJ992838uhzjhjshud")->setEnvironment('staging')->setPrefix("rave", false)->initialize(route('callback'));
+    }
+
+    /**
+     * Obtain Rave callback information
+     * @return void
+     */
+    public function callback()
+    {
+        $data = Rave::requeryTransaction(request()->txref);
+
+        dd($data);
+        // Get the transaction from your DB using the transaction reference (txref)
+        // Check if you have previously given value for the transaction. If you have, redirect to your successpage else, continue
+        // Comfirm that the transaction is successful
+        // Confirm that the chargecode is 00 or 0
+        // Confirm that the currency on your db transaction is equal to the returned currency
+        // Confirm that the db transaction amount is equal to the returned amount
+        // Update the db transaction record (includeing parameters that didn't exist before the transaction is completed. for audit purpose)
+        // Give value for the transaction
+        // Update the transaction to note that you have given value for the transaction
+        // You can also redirect to your success page from here
+        
+    }
+}
+```
+
+#### 3.2 Setup your Controller with event handling
+>For more functionality, you are adviced to use the Event Handler Interface, it enables more flexibility in handling transactions events.
+
+```php
+<?php
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+//use the Rave Facade
+use Rave;
+//use the Class that implemented the RaveEventHandlerInterface, we will create this next
+use App\Events\PaymentEventHandler;
+
+class RaveController extends Controller
+{
+
+    /**
+     * Initialize Rave payment process
+     * @return void
+     */
+    public function initialize()
+    {
+        //This initializes payment and redirects to the payment gateway
+        //The initialize method takes the parameter of the redirect URL
+        //Use the eventHandler method and pass a new instance of your class implementing RaveEventHandlerInterface in the parameter
+        Rave::eventHandler(new PaymentEventHandler)->initialize(route('callback'));
+
+        /***
+        *For more functionality you can use more methods like the one below
+        *setKeys($publicKey, $secretKey) - This is used to set the puvlic and secret key incase you wat to use another one different from your .env
+        *setEnvironment($env) - This is used to set to either staging or live incase you want to use something different from your .env
+        *
+        *setPrefix($prefix, $overrideRefWithPrefix=false) - 
+        ***$prefix - To add prefix to your transaction reference eg. KC will lead to KC_hjdjghddhgd737
+        ***$overrideRefWithPrefix - either true/false. True will override the autogenerate reference with $prefix/request()->ref while false will use the $prefix as your prefix
+        **/
+
+        //Rave::setKeys($publicKey, $secretKey)->setEnvironment($env)->setPrefix($prefix, $overrideRefWithPrefix=false)->initialize(route('callback'));
+
+        //eg: Rave::setEnvironment('live')->setPrefix("flamez")->initialize(route('callback'));
+        //eg: Rave::setKeys("PWHNNJ992838uhzjhjshud", "PWHNNJ992838uhzjhjshud")->setPrefix(request()->ref, true)->initialize(route('callback'));
+        //eg: Rave::setKeys("PWHNNJ992838uhzjhjshud, "PWHNNJ992838uhzjhjshud")->setEnvironment('staging')->setPrefix("rave", false)->initialize(route('callback'));
+    }
+
+    /**
+     * Obtain Rave callback information
+     * @return void
+     */
+    public function callback()
+    {
+        //Use the eventHandler method and pass a new instance of your class implementing RaveEventHandlerInterface in the parameter
+        if(request()->cancelled && request()->txref){
+            // Handle canceled payments
+            Rave::eventHandler(new PaymentEventHandler)
+            ->requeryTransaction(request()->txref)
+            ->paymentCanceled(request()->txref);
+        }elseif(request()->txref){
+            // Handle completed payments  
+            Rave::eventHandler(new PaymentEventHandler)
+            ->requeryTransaction(request()->txref);
+        }else{
+            echo 'Stop!!! Please pass the txref parameter!';
+        }
+    }
+}
+
+```
+
+#### 4. Create the Event Handler Class
+>This is where you set how you want to handle the transaction at different stages. You can store this anywhere. As for me, I created an `Events` folder in the `app/` directory.  Location: `app/Events/PaymentEventHandler.php`. You can have different event handlers for different type of payments. You can even store it in your controller `App\Http\Controllers`. Anyone that suits you
 
 <p align="center">
  <img src="https://raw.githubusercontent.com/kingflamez/laravelrave/master/resources/img/RaveInterface.jpg" style="height: 100px" alt="Events Directory with different classes implementing the RaveEventHandlerInterface"/>
@@ -161,8 +310,6 @@ A sample form will look like so:
 <p align="center">Events Directory with different event handler classes implementing the RaveEventHandlerInterface</p>
 
 >Copy and paste the methods and replace with your actions for each event
-
-#### Example
 
 ```php
 <?php
@@ -238,33 +385,6 @@ class PaymentEventHandler implements RaveEventHandlerInterface{
     }
     
     /**
-     * This is called when a transaction is successfully verified
-     * @param string $requeryResponse This is the success response gotten from the Rave payment gateway verification call
-     * */
-    function onVerificationSuccess($requeryResponse){
-        //Successful payment verification, you can do anything here
-         echo 'Verification Successfull...'.json_encode($requeryResponse).'<br />'; //Remember to delete this line
-         dd($requeryResponse);
-    }
-    
-    /**
-     * This is called when a transaction failed verification
-     * @param string $requeryResponse This is the failed response gotten from the Rave payment gateway verification call
-     * */
-    function onVerificationFailed($requeryResponse){
-        //Failed payment verification, you can do anything here
-
-        //Can fail for 3 reasons
-        //1. When the amount charged is not the same as the original order
-        // eg. You charged NGN5000 and the user got to pay NGN800. This helps to limit fraud
-        //2. When the currency the user was charged in was not the same as the original order
-        // eg. You charged GHC200 and the user got to pay NGN200. 
-        //3. When Flutterwave confirms from their end that it is not a successfull verification
-       
-        echo 'Verification Failed...'.json_encode($requeryResponse).'<br />'; //Remember to delete this line
-    }
-    
-    /**
      * This is called when a transaction doesn't return with a success or a failure response. This can be a timedout transaction on the Rave server or an abandoned transaction by the customer.
      * */
     function onTimeout($transactionReference, $data){
@@ -276,112 +396,6 @@ class PaymentEventHandler implements RaveEventHandlerInterface{
 }
 ```
 
-#### 4. Setup your Controller
-> Setup your controller to handle the routes. I created the `RaveController`. Use the `Rave`
-class from `KingFlamez\Rave\Rave` and also your payment event handler, I chose `App\Events\PaymentEventHandler`. Initiate the Rave class and use the methods needed.
-
-> Class documentation can be found here [https://flutterwave.github.io/Flutterwave-Rave-PHP-SDK/packages/Default.html](https://flutterwave.github.io/Flutterwave-Rave-PHP-SDK/packages/Default.html)
-
-#### Example
-
-```php
-<?php
-namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
-
-//import the Rave Class and your Payment Event Handler
-use KingFlamez\Rave\Rave;
-use App\Events\PaymentEventHandler;
-
-class RaveController extends Controller
-{
-    public function initialize()
-    {
-        $prefix = 'MY_COMPANY_NAME'; // Change this to the name of your business or app
-        $overrideRefWithPrefix = false;
-
-        // Uncomment here to enforce the useage of your own ref else a ref will be generated for you automatically
-        // if(request()->ref){
-        //     $prefix = request()->ref;
-        //     $overrideRefWithPrefix = true;
-        // }
-
-
-        /**
-         * Initialize Rave class
-         * @param string $prefix This is added to the front of your transaction reference numbers
-         * @param boolean $overrideRefWithPrefix Set this parameter to true to use your prefix as the transaction reference
-         * default - $overrideRefWithPrefix = false
-         * @return object
-         * */
-
-        $rave = new Rave($prefix, $overrideRefWithPrefix);
-
-        $rave
-        ->eventHandler(new PaymentEventHandler)
-        ->setAmount(request()->amount)
-        ->setPaymentMethod(request()->payment_method) // value can be card, account or both
-        ->setDescription(request()->description)
-        ->setLogo(request()->logo) // This might not be included if you have it set in your .env file
-        ->setTitle(request()->title) // This can be left blank if you have it set in your .env file
-        ->setCountry(request()->country)
-        ->setCurrency(request()->currency)
-        ->setEmail(request()->email)
-        ->setFirstname(request()->firstname)
-        ->setLastname(request()->lastname)
-        ->setPhoneNumber(request()->phonenumber)
-        ->setPayButtonText(request()->pay_button_text)
-        ->setRedirectUrl(route('callback'))
-        // ->setMetaData(array('metaname' => 'SomeDataName', 'metavalue' => 'SomeValue')) // can be called multiple times. Uncomment this to add meta datas
-        // ->setMetaData(array('metaname' => 'SomeOtherDataName', 'metavalue' => 'SomeOtherValue')) // can be called multiple times. Uncomment this to add meta datas
-        // ->setMetaData(array('metaname' => 'color', 'metavalue' => 'Blue')) // can be called multiple times. Example. Uncomment this to add meta datas
-        ->initialize();
-    }
-
-    /**
-     * Obtain Rave callback information
-     * @return void
-     */
-    public function callback()
-    {
-        $prefix = 'MY_COMPANY_NAME';
-
-        /**
-         * Initialize Rave class
-         * @param string $prefix This is added to the front of your transaction reference numbers
-         * @param boolean $overrideRefWithPrefix Set this parameter to true to use your prefix as the transaction reference
-         * default - $overrideRefWithPrefix = false
-         * @return object
-         * */
-
-        $rave = new Rave($prefix);
-        if(request()->cancelled && request()->txref){
-            // Handle canceled payments
-            $rave
-            ->eventHandler(new PaymentEventHandler)
-            ->requeryTransaction(request()->txref)
-            ->paymentCanceled(request()->txref);
-        }elseif(request()->txref && request()->flwref){
-            // Handle completed payments   
-
-            //$order = Order::where('referenceNumber', request()->txref)->first();
-            //$amount = $order->amount
-            //$currency = $order->currency
-
-            $amount = 30000.75; //Fetch amount of the order or product from your server eg with eloquent
-            $currency = "NGN"; //Fetch amount of the order or product from your server eg with eloquent
-
-            $rave
-            ->eventHandler(new PaymentEventHandler)
-            ->requeryTransaction(request()->txref)
-            ->verifyTransaction($amount, $currency);
-        }else{
-            echo 'Stop!!! Please pass the txref parameter!';
-        }
-    }
-}
-```
 You can also find the class documentation in the docs folder. There you will find documentation for the [`Rave`](https://github.com/Flutterwave/Flutterwave-Rave-PHP-SDK/tree/master/docs) class and the `EventHandlerInterface`.
 
 ### Payment

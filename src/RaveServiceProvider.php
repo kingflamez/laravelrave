@@ -28,10 +28,20 @@ class RaveServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('laravelrave', function () {
 
-            return new Rave;
+        $this->app->singleton('laravelrave', function () {
+
+            return new Rave();
 
         });
+    }
+
+    /**
+    * Get the services provided by the provider
+    * @return array
+    */
+    public function provides()
+    {
+        return ['laravelrave'];
     }
 }

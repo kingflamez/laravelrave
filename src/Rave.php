@@ -44,16 +44,13 @@ class Rave {
     
     /**
      * Construct
-     * @param string $publicKey Your Rave publicKey. Sign up on https://rave.flutterwave.com to get one from your settings page
-     * @param string $secretKey Your Rave secretKey. Sign up on https://rave.flutterwave.com to get one from your settings page
-     * @param string $prefix This is added to the front of your transaction reference numbers
-     * @param string $env This can either be 'staging' or 'live'
-     * @param boolean $overrideRefWithPrefix Set this parameter to true to use your prefix as the transaction reference
      * @return object
      * */
-    function __construct($prefix, $overrideRefWithPrefix = false){
+    function __construct(){
+        $prefix = Config::get('rave.prefix');
+        $overrideRefWithPrefix = false;
         // create a log channel
-     	Log::useDailyFiles(storage_path().'/logs/Flutterwave rave/rave.log');
+        Log::useDailyFiles(storage_path().'/logs/Flutterwave rave/rave.log');
 
         $this->publicKey = Config::get('rave.publicKey');
         $this->secretKey = Config::get('rave.secretKey');
@@ -142,6 +139,45 @@ class Rave {
      * */
     function getReferenceNumber(){
         return $this->txref;
+    }
+
+
+    /**
+     * Sets the public and secret key
+     * @param string $publicKey Your Rave publicKey. Sign up on https://rave.flutterwave.com to get one from your settings page
+     * @param string $secretKey Your Rave secretKey. Sign up on https://rave.flutterwave.com to get one from your settings page
+     * @return object
+     * */
+    public function setKeys($publicKey, $secretKey)
+    {
+        $this->publicKey = $publicKey;
+        $this->secretKey = $secretKey;
+        return $this;
+    }
+
+    /**
+     * Set the environment 
+     * @param string $env This can either be 'staging' or 'live'
+     * @return object
+     * */
+    public function setEnvironment($env)
+    {
+        $this->env = $env;
+        return $this;
+    }
+
+    /**
+     * Set the environment 
+     * @param string $prefix This is added to the front of your transaction reference numbers
+     * @param boolean $overrideRefWithPrefix Set this parameter to true to use your prefix as the transaction reference
+     * @return object
+     * */
+    public function setPrefix($prefix, $overrideRefWithPrefix=false)
+    {
+        $this->transactionPrefix = $overrideRefWithPrefix ? $prefix : $prefix.'_';
+        $this->overrideTransactionReference = $overrideRefWithPrefix;
+        $this->createReferenceNumber();
+        return $this;
     }
     
     /**
@@ -441,12 +477,16 @@ class Rave {
                 // Handle successful
                 if(isset($this->handler)){
                     $this->handler->onSuccessful($response->body->data);
+                }else{
+                    return $response;
                 }
             }elseif($response->body && $response->body->data && $response->body->data->status === "failed"){
                 // Handle Failure
                 Log::warning('Requeryed a failed transaction....'.json_encode($response->body->data));
                 if(isset($this->handler)){
                     $this->handler->onFailure($response->body->data);
+                }else{
+                    return $response;
                 }
             }else{
                 // Handled an undecisive transaction. Probably timed out.
@@ -456,6 +496,8 @@ class Rave {
                     // Now you have to setup a queue by force. We couldn't get a status in 5 requeries.
                     if(isset($this->handler)){
                         $this->handler->onTimeout($this->txref, $response->body);
+                    }else{
+                        return $response->body;
                     }
                 }else{
                     Log::notice('delaying next requery for 3 seconds');
@@ -469,70 +511,11 @@ class Rave {
             // Handle Requery Error
             if(isset($this->handler)){
                 $this->handler->onRequeryError($response->body);
+            }else{
+                return $response->body;
             }
         }
         return $this;
-    }
-
-    /**
-    * Verifies current Transaction from the the Rave Payment Gateway 
-    * @param double $amount This should be the total price/amount of the order from your server/database
-    * @param string $currency This should be the currency the order was being charged
-    * @return boolean
-    **/
-
-    public function verifyTransaction($amount, $currency)
-    {
-        // Handle completed payments
-        
-        $ref = request()->flwref;
-        $amount = $amount; //Correct Amount from Server
-        $currency = $currency; //Correct Currency from Server
-
-
-        Log::notice('Payment verification started of '.$ref);
-
-        $query = array(
-            "SECKEY" => Config::get('rave.secretKey'),
-            "flw_ref" => $ref,
-            "normalize" => "1"
-        );
-
-        $data_string = json_encode($query);
-                
-        $ch = curl_init($this->baseUrl.'/flwv3-pug/getpaidx/api/verify');                                                                      
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                              
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-
-        $response = curl_exec($ch);
-
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $header = substr($response, 0, $header_size);
-        $body = substr($response, $header_size);
-
-        curl_close($ch);
-
-        $resp = json_decode($response, true);
-        $chargeResponse = $resp['data']['flwMeta']['chargeResponse'];
-        $chargeAmount = $resp['data']['amount'];
-        $chargeCurrency = $resp['data']['transaction_currency'];
-        if (($chargeResponse == "00" || $chargeResponse == "0") && ($chargeAmount == $amount)  && ($chargeCurrency == $currency)){
-           // Handle verified payments
-            Log::notice('Payment verified successfully...'.json_encode($resp['data']));
-            if(isset($this->handler)){
-                $this->handler->onVerificationSuccess($resp['data']);
-            }
-        }
-        else {
-            Log::warning('Payment verification failed...'.json_encode($resp['data']));
-            if(isset($this->handler)){
-                $this->handler->onVerificationFailed($resp['data']);
-            }
-        }
-            
     }
     
     
@@ -540,7 +523,25 @@ class Rave {
      * Generates the final json to be used in configuring the payment call to the rave payment gateway
      * @return string
      * */
-    function initialize(){
+    function initialize($redirectURL){
+        $this->setAmount(request()->amount)
+        ->setPaymentMethod(request()->payment_method) // value can be card, account or both
+        ->setDescription(request()->description)
+        ->setLogo(request()->logo) // This might not be included if you have it set in your .env file
+        ->setTitle(request()->title) // This can be left blank if you have it set in your .env file
+        ->setCountry(request()->country)
+        ->setCurrency(request()->currency)
+        ->setEmail(request()->email)
+        ->setFirstname(request()->firstname)
+        ->setLastname(request()->lastname)
+        ->setPhoneNumber(request()->phonenumber)
+        ->setPayButtonText(request()->pay_button_text)
+        ->setRedirectUrl($redirectURL);
+
+        if (!empty(request()->metadata)) {
+           $this->meta = json_decode(request()->metadata, true);
+        }
+
         $this->createCheckSum();
         $this->transactionData = array_merge($this->transactionData, array('integrity_hash' => $this->integrityHash), array('meta' => $this->meta));
         
@@ -554,7 +555,7 @@ class Rave {
         echo '<center>Proccessing...<br /><img style="height: 50px;" src="https://media.giphy.com/media/swhRkVYLJDrCE/giphy.gif" /></center>';
         echo '<script type="text/javascript" src="'.$this->baseUrl.'/flwv3-pug/getpaidx/api/flwpbf-inline.js"></script>';
         echo '<script>';
-	    echo 'document.addEventListener("DOMContentLoaded", function(event) {';
+        echo 'document.addEventListener("DOMContentLoaded", function(event) {';
         echo 'var data = JSON.parse(\''.$json.'\');';
         echo 'getpaidSetup(data);';
         echo '});';
@@ -575,6 +576,10 @@ class Rave {
         Log::notice('Payment was canceled by user..'.$this->txref);
         if(isset($this->handler)){
             $this->handler->onCancel($this->txref);
+        }else{
+            $collection = collect(['status' => "canceled",
+                                'txref' => $this->txref ]);
+            return $collection->toJson();
         }
         return $this;
     }
