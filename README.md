@@ -165,7 +165,7 @@ $array = array(array('metaname' => 'color', 'metavalue' => 'blue'),
 </form>
 ```
 
-#### 3 Setup your Controller without event handling
+#### 3. Setup your Controller without event handling
 > Setup your controller to handle the routes. I created the `RaveController`. Use the `Rave`
 facade. 
 
@@ -248,7 +248,7 @@ class RaveController extends Controller
 OR
 </h2>
 
-#### 3 Setup your Controller with event handling
+#### 3. Setup your Controller with event handling
 >For more functionality, you are adviced to use the Event Handler Interface, it enables more flexibility in handling transactions events. You can perform actions easily, check step 4 to see the list of methods available.
 
 ```php
