@@ -165,7 +165,7 @@ $array = array(array('metaname' => 'color', 'metavalue' => 'blue'),
 </form>
 ```
 
-#### 3.1 Setup your Controller
+#### 3 Setup your Controller without event handling
 > Setup your controller to handle the routes. I created the `RaveController`. Use the `Rave`
 facade. 
 
@@ -216,7 +216,17 @@ class RaveController extends Controller
      */
     public function callback()
     {
-        $data = Rave::requeryTransaction(request()->txref);
+        if(request()->cancelled && request()->txref){
+            //Handles Request if its cancelled
+            //Payment might have been made before cancellation
+            //This verifies if it's paid or not
+            $data = Rave::requeryTransaction(request()->txref)->paymentCanceled(request()->txref);
+        }elseif(request()->txref){
+            // Handle completed payments  
+            $data = Rave::requeryTransaction(request()->txref);
+        }else{
+            echo 'Stop!!! Please pass the txref parameter!';
+        }
 
         dd($data);
         // Get the transaction from your DB using the transaction reference (txref)
@@ -234,8 +244,12 @@ class RaveController extends Controller
 }
 ```
 
-#### 3.2 Setup your Controller with event handling
->For more functionality, you are adviced to use the Event Handler Interface, it enables more flexibility in handling transactions events.
+<h2 align="center">
+OR
+</h2>
+
+#### 3 Setup your Controller with event handling
+>For more functionality, you are adviced to use the Event Handler Interface, it enables more flexibility in handling transactions events. You can perform actions easily, check step 4 to see the list of methods available.
 
 ```php
 <?php
@@ -311,6 +325,9 @@ class RaveController extends Controller
 </p>
 
 <p align="center">Events Directory with different event handler classes implementing the RaveEventHandlerInterface</p>
+
+>You can perform actions easily when the
+transaction initializes, after a successful transaction, after a failed transaction, when the transaction is being requeried, when the transaction is canceled by the user, when the requery timesout (you can setup a queue system), when there is a requery error.
 
 >Copy and paste the methods and replace with your actions for each event
 

@@ -45,6 +45,6 @@ return [
      * Prefix: This is added to the front of your transaction reference numbers
      *
      */
-    'prefix' => env('RAVE_PREFIX', ''),
+    'prefix' => env('RAVE_PREFIX', 'rave'),
 
 ];
