@@ -432,6 +432,40 @@ class Rave {
         return $this->meta;
     }
     
+
+    /**
+     * Sets the data from the form
+     * @param string $redirectUrl The URL it redirects too after a transaction
+     * @return object
+     * */
+    public function setData($redirectURL)
+    {
+        $this->setAmount(request()->amount)
+        ->setDescription(request()->description)
+        ->setCountry(request()->country)
+        ->setCurrency(request()->currency)
+        ->setEmail(request()->email)
+        ->setFirstname(request()->firstname)
+        ->setLastname(request()->lastname)
+        ->setPhoneNumber(request()->phonenumber)
+        ->setPayButtonText(request()->pay_button_text)
+        ->setRedirectUrl($redirectURL);
+
+        if (request()->payment_method) {
+            $this->setPaymentMethod(request()->payment_method); // value can be card, account or both
+        }
+
+        if (request()->logo) {
+            $this->setLogo(request()->logo); // This might not be included if you have it set in your .env file
+        }
+
+        if (request()->title) {
+            $this->setTitle(request()->title); // This can be left blank if you have it set in your .env file
+        }
+
+        return $this;
+    }
+
     /**
      * Sets the event hooks for all available triggers
      * @param object $handler This is a class that implements the Event Handler Interface
@@ -524,19 +558,7 @@ class Rave {
      * @return string
      * */
     function initialize($redirectURL){
-        $this->setAmount(request()->amount)
-        ->setPaymentMethod(request()->payment_method) // value can be card, account or both
-        ->setDescription(request()->description)
-        ->setLogo(request()->logo) // This might not be included if you have it set in your .env file
-        ->setTitle(request()->title) // This can be left blank if you have it set in your .env file
-        ->setCountry(request()->country)
-        ->setCurrency(request()->currency)
-        ->setEmail(request()->email)
-        ->setFirstname(request()->firstname)
-        ->setLastname(request()->lastname)
-        ->setPhoneNumber(request()->phonenumber)
-        ->setPayButtonText(request()->pay_button_text)
-        ->setRedirectUrl($redirectURL);
+        $this->setData($redirectURL);
 
         if (!empty(request()->metadata)) {
            $this->meta = json_decode(request()->metadata, true);
