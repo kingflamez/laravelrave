@@ -140,10 +140,10 @@ protected $except = [
 
 A sample form will look like so:
 ```html
- <?php
+@php
 $array = array(array('metaname' => 'color', 'metavalue' => 'blue'),
                 array('metaname' => 'size', 'metavalue' => 'big'));
-?>
+@endphp
 <h3>Buy Beats By Dre N30000.75</h3>
 <form method="POST" action="{{ route('pay') }}" id="paymentForm">
     {{ csrf_field() }}
