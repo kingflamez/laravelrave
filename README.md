@@ -50,44 +50,8 @@ Publish the configuration file using this command:
 php artisan vendor:publish --provider="KingFlamez\Rave\RaveServiceProvider"
 ```
 
-A configuration-file named **`rave.php`** will be placed in your **`config`** directory:
+A configuration-file named **`rave.php`** will be placed in your **`config`** directory
 
-```php
-<?php
-return [
-
-    /**
-     * Public Key: Your Rave publicKey. Sign up on https://ravepay.co to get one from your settings page
-     *
-     */
-    'publicKey' => getenv('RAVE_PUBLIC_KEY'),
-
-    /**
-     * Secret Key: Your Rave secretKey. Sign up on https://ravepay.co to get one from your settings page
-     *
-     */
-    'secretKey' => getenv('RAVE_SECRET_KEY'),
-
-    /**
-     * Company/Business/Store Name: The name of your store
-     *
-     */
-    'title' => env('RAVE_TITLE', 'Rave Payment Gateway'),
-
-    /**
-     * Environment: This can either be 'staging' or 'live'
-     *
-     */
-    'env' => env('RAVE_ENVIRONMENT', 'staging'),
-
-    /**
-     * Logo: Enter the URL of your company/business logo
-     *
-     */
-    'logo' => env('RAVE_LOGO', ''),
-
-];
-```
 ## Usage
 
 Open your .env file and add your public key, secret key, environment variable and logo url like so:
