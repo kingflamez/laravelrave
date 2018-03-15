@@ -4,13 +4,13 @@
     "keywords": ["php","github", "laravel","Open Source","payments", "kingflamez", "Flutterwave Rave", "Flutterwave", "rave", "ravepay.co","laravel 5"],
     "license": "MIT",
     "authors": [
-      {
-        "name": "kingflamez",
-        "email": "flamekeed@gmail.com"
-      }
-   ],
-   "minimum-stability": "stable",
-   "require": {
+        {
+            "name": "kingflamez",
+            "email": "flamekeed@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
         "php": "^5.4.0|^7.0",
         "illuminate/support": "5.*",
         "mashape/unirest-php": "^3.0"
@@ -19,24 +19,30 @@
         "phpunit/phpunit" : "4.*",
         "scrutinizer/ocular": "~1.1",
         "satooshi/php-coveralls": "^0.7.0",
-        "mockery/mockery": ">=0.7.2"
+        "mockery/mockery": ">=0.7.2",
+        "orchestra/testbench": "~3.0"
     },
-   "autoload": {
+    "autoload": {
         "classmap": [
             "src/Rave.php"
         ],
         "psr-4": {
           "KingFlamez\\Rave\\": "src/"
         }
-   },
-   "extra": {
-    "laravel": {
-        "providers": [
-            "KingFlamez\\Rave\\RaveServiceProvider"
-        ],
-        "aliases": {
-            "Rave": "KingFlamez\\Rave\\Facades\\Rave"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "KingFlamez\\Rave\\RaveServiceProvider"
+            ],
+            "aliases": {
+                "Rave": "KingFlamez\\Rave\\Facades\\Rave"
+            }
         }
     }
-}
 }
