@@ -6,6 +6,9 @@
  * @return array
  */
 return [
+    /**
+     * Request mocking data
+     */
     "form" => [
         "amount" => 30000,
         "title" => "A Title",
@@ -20,6 +23,10 @@ return [
         "description" => "Some random description.",
         "logo" => "https://files.readme.io/ee907a0-small-rave_by_flutterwave.png",
     ],
+
+    /**
+     * Rave original properties representation.
+     */
     "class" => [
         "amount",
         "country",

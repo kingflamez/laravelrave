@@ -103,14 +103,13 @@ class Rave {
 
         $hashedPayload = '';
 
-        foreach($options as $key => $value){
+        foreach($options as $value){
             $hashedPayload .= $value;
         }
 
         $completeHash = $hashedPayload.$this->secretKey;
-        $hash = hash('sha256', $completeHash);
 
-        $this->integrityHash = $hash;
+        $this->integrityHash = hash('sha256', $completeHash);
         return $this;
     }
 
@@ -467,7 +466,7 @@ class Rave {
      * @param object $handler This is a class that implements the Event Handler Interface
      * @return object
      * */
-    function eventHandler($handler){
+    function eventHandler(RaveEventHandlerInterface $handler){
         $this->handler = $handler;
         return $this;
     }
@@ -553,7 +552,7 @@ class Rave {
      * Generates the final json to be used in configuring the payment call to the rave payment gateway
      * @return string
      * */
-    function initialize($redirectURL){
+    function initialize(string $redirectURL){
         $this->setData($redirectURL);
 
         if (!empty($this->request->metadata)) {

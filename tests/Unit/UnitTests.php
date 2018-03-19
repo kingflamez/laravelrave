@@ -3,11 +3,13 @@
 namespace Tests\Unit;
 
 use App;
+use Carbon\Carbon;
 use Tests\TestCase;
 use ReflectionClass;
 use ReflectionProperty;
 use KingFlamez\Rave\Rave;
 use Illuminate\Http\Request;
+use Tests\Stubs\PaymentEventHandler;
 use Tests\Concerns\ExtractProperties;
 
 class UnitTests extends TestCase {
@@ -355,5 +357,37 @@ class UnitTests extends TestCase {
 
         $this->assertInternalType("string", $redirectUrlGetter);
         $this->assertEquals($newRedirectUrl, $redirectUrlGetter);
+    }
+
+    /**
+     * Testing if event handler is set using eventHandler.
+     *
+     * @test
+     * @depends initiateRaveFromApp
+     * @return void
+     */
+    function settingEventHandler(Rave $rave) {
+
+        $newEventHandler = new PaymentEventHandler;
+        $rave->eventHandler($newEventHandler);
+        $handler = $this->extractProperty($rave, "handler");
+
+        $this->assertInstanceOf(PaymentEventHandler::class, $handler["value"]);
+    }
+
+    /**
+     * Testing if meta data is set using setMetaData.
+     *
+     * @test
+     * @depends initiateRaveFromApp
+     * @return void
+     */
+    function settingMetaData(Rave $rave) {
+
+        $newMetaData = ["date" => Carbon::now()];
+        $rave->setMetaData($newMetaData);
+        $metaData = $rave->getMetaData();
+
+        $this->assertArraySubset($newMetaData, $metaData[0]);
     }
 }
