@@ -2,6 +2,7 @@
 
 namespace KingFlamez\Rave;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 
 class RaveServiceProvider extends ServiceProvider
@@ -30,9 +31,9 @@ class RaveServiceProvider extends ServiceProvider
     public function register()
     {
 
-        $this->app->singleton('laravelrave', function () {
+        $this->app->singleton('laravelrave', function ($app) {
 
-            return new Rave;
+            return new Rave($app->make("request"));
 
         });
 

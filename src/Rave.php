@@ -5,6 +5,7 @@ namespace KingFlamez\Rave;
 use Log;
 use Unirest\Request;
 use Unirest\Request\Body;
+use Illuminate\Http\Request as LaravelRequest;
 use Illuminate\Support\Facades\Config;
 
 /**
@@ -35,18 +36,22 @@ class Rave {
     protected $env = 'staging';
     protected $transactionPrefix;
     protected $handler;
-    protected $stagingUrl = 'https://rave-api-v2.herokuapp.com';
-    protected $liveUrl = 'https://api.ravepay.co';
+    protected $urls = [
+        "live" => "https://api.ravepay.co",
+        "others" => "https://rave-api-v2.herokuapp.com",
+    ];
     protected $baseUrl;
     protected $transactionData;
     protected $overrideTransactionReference;
     protected $requeryCount = 0;
+    protected $request;
 
     /**
      * Construct
      * @return object
      * */
-    function __construct(){
+    function __construct (LaravelRequest $request) {
+        $this->request = $request;
         $prefix = Config::get('rave.prefix');
         $overrideRefWithPrefix = false;
         // create a log channel
@@ -62,19 +67,10 @@ class Rave {
 
         $this->createReferenceNumber();
 
-        if($this->env === 'staging'){
-            $this->baseUrl = $this->stagingUrl;
-        }elseif($this->env === 'live'){
-            $this->baseUrl = $this->liveUrl;
-        }else{
-            $this->baseUrl = $this->stagingUrl;
-        }
+        $this->baseUrl = $this->urls[($this->env === "live" ? "$this->env" : "others")];
 
         Log::notice('Rave Class Initializes....');
-
-        return $this;
     }
-
 
     /**
      * Generates a checksum value for the information to be sent to the payment gateway
@@ -147,7 +143,7 @@ class Rave {
      * @param string $secretKey Your Rave secretKey. Sign up on https://rave.flutterwave.com to get one from your settings page
      * @return object
      * */
-    public function setKeys($publicKey, $secretKey)
+    public function setKeys(string $publicKey, string $secretKey)
     {
         $this->publicKey = $publicKey;
         $this->secretKey = $secretKey;
@@ -159,7 +155,7 @@ class Rave {
      * @param string $env This can either be 'staging' or 'live'
      * @return object
      * */
-    public function setEnvironment($env)
+    public function setEnvironment(string $env)
     {
         $this->env = $env;
         return $this;
@@ -171,7 +167,7 @@ class Rave {
      * @param boolean $overrideRefWithPrefix Set this parameter to true to use your prefix as the transaction reference
      * @return object
      * */
-    public function setPrefix($prefix, $overrideRefWithPrefix = false)
+    public function setPrefix(string $prefix, $overrideRefWithPrefix = false)
     {
         $this->transactionPrefix = $overrideRefWithPrefix ? $prefix : $prefix.'_';
         $this->overrideTransactionReference = $overrideRefWithPrefix;
@@ -181,7 +177,8 @@ class Rave {
 
     /**
      * Sets the transaction amount
-     * @param integer $amount Transaction amount
+     *
+     * @param mixed $amount Transaction amount (could be integer or double)
      * @return object
      * */
     function setAmount($amount){
@@ -194,7 +191,7 @@ class Rave {
      * @return string
      * */
     function getAmount(){
-        return $this;
+        return $this->amount;
     }
 
     /**
@@ -202,7 +199,7 @@ class Rave {
      * @param string $paymentMethod The allowed payment methods. Can be card, account or both
      * @return object
      * */
-    function setPaymentMethod($paymentMethod){
+    function setPaymentMethod(string $paymentMethod){
         $this->paymentMethod = $paymentMethod;
         return $this;
     }
@@ -212,7 +209,7 @@ class Rave {
      * @return string
      * */
     function getPaymentMethod(){
-        return $this;
+        return $this->paymentMethod;
     }
 
     /**
@@ -220,7 +217,7 @@ class Rave {
      * @param string $customDescription The description of the transaction
      * @return object
      * */
-    function setDescription($customDescription){
+    function setDescription (string $customDescription) {
         $this->customDescription = $customDescription;
         return $this;
     }
@@ -238,7 +235,7 @@ class Rave {
      * @param string $customLogo Your Logo
      * @return object
      * */
-    function setLogo($customLogo){
+    function setLogo(string $customLogo){
         $this->customLogo = $customLogo;
         return $this;
     }
@@ -256,7 +253,7 @@ class Rave {
      * @param string $customTitle A title for the payment. It can be the product name, your business name or anything short and descriptive
      * @return object
      * */
-    function setTitle($customTitle){
+    function setTitle(string $customTitle){
         $this->customTitle = $customTitle;
         return $this;
     }
@@ -274,7 +271,7 @@ class Rave {
      * @param string $country The transaction country. Can be NG, US, KE, GH and ZA
      * @return object
      * */
-    function setCountry($country){
+    function setCountry(string $country){
         $this->country = $country;
         return $this;
     }
@@ -292,7 +289,7 @@ class Rave {
      * @param string $currency The transaction currency. Can be NGN, GHS, KES, ZAR, USD, EUR and GBP
      * @return object
      * */
-    function setCurrency($currency){
+    function setCurrency(string $currency){
         $this->currency = $currency;
         return $this;
     }
@@ -310,7 +307,7 @@ class Rave {
      * @param string $customerEmail This is the paying customer's email
      * @return object
      * */
-    function setEmail($customerEmail){
+    function setEmail(string $customerEmail){
         $this->customerEmail = $customerEmail;
         return $this;
     }
@@ -328,7 +325,7 @@ class Rave {
      * @param string $customerFirstname This is the paying customer's firstname
      * @return object
      * */
-    function setFirstname($customerFirstname){
+    function setFirstname(string $customerFirstname){
         $this->customerFirstname = $customerFirstname;
         return $this;
     }
@@ -346,7 +343,7 @@ class Rave {
      * @param string $customerLastname This is the paying customer's lastname
      * @return object
      * */
-    function setLastname($customerLastname){
+    function setLastname(string $customerLastname){
         $this->customerLastname = $customerLastname;
         return $this;
     }
@@ -364,7 +361,7 @@ class Rave {
      * @param string $customerPhone This is the paying customer's phonenumber
      * @return object
      * */
-    function setPhoneNumber($customerPhone){
+    function setPhoneNumber(string $customerPhone){
         $this->customerPhone = $customerPhone;
         return $this;
     }
@@ -439,27 +436,27 @@ class Rave {
      * */
     public function setData($redirectURL)
     {
-        $this->setAmount(request()->amount)
-            ->setDescription(request()->description)
-            ->setCountry(request()->country)
-            ->setCurrency(request()->currency)
-            ->setEmail(request()->email)
-            ->setFirstname(request()->firstname)
-            ->setLastname(request()->lastname)
-            ->setPhoneNumber(request()->phonenumber)
-            ->setPayButtonText(request()->pay_button_text)
+        $this->setAmount($this->request->amount)
+            ->setDescription($this->request->description)
+            ->setCountry($this->request->country)
+            ->setCurrency($this->request->currency)
+            ->setEmail($this->request->email)
+            ->setFirstname($this->request->firstname)
+            ->setLastname($this->request->lastname)
+            ->setPhoneNumber($this->request->phonenumber)
+            ->setPayButtonText($this->request->pay_button_text)
             ->setRedirectUrl($redirectURL);
 
-        if (request()->payment_method) {
-            $this->setPaymentMethod(request()->payment_method); // value can be card, account or both
+        if ($this->request->payment_method) {
+            $this->setPaymentMethod($this->request->payment_method); // value can be card, account or both
         }
 
-        if (request()->logo) {
-            $this->setLogo(request()->logo); // This might not be included if you have it set in your .env file
+        if ($this->request->logo) {
+            $this->setLogo($this->request->logo); // This might not be included if you have it set in your .env file
         }
 
-        if (request()->title) {
-            $this->setTitle(request()->title); // This can be left blank if you have it set in your .env file
+        if ($this->request->title) {
+            $this->setTitle($this->request->title); // This can be left blank if you have it set in your .env file
         }
 
         return $this;
@@ -559,8 +556,8 @@ class Rave {
     function initialize($redirectURL){
         $this->setData($redirectURL);
 
-        if (!empty(request()->metadata)) {
-           $this->meta = json_decode(request()->metadata, true);
+        if (!empty($this->request->metadata)) {
+           $this->meta = json_decode($this->request->metadata, true);
         }
 
         $this->createCheckSum();
@@ -597,18 +594,13 @@ class Rave {
         Log::notice('Payment was canceled by user..'.$this->txref);
         if(isset($this->handler)){
             $this->handler->onCancel($this->txref);
-        }else{
+        } else {
             $collection = collect(['status' => "canceled",
                                 'txref' => $this->txref ]);
             return $collection->toJson();
         }
         return $this;
     }
-
-    function test () {
-        return true;
-    }
-
 }
 
 // silencio es dorado

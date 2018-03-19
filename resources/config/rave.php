@@ -46,5 +46,4 @@ return [
      *
      */
     'prefix' => env('RAVE_PREFIX', 'rave'),
-
 ];

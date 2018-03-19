@@ -2,9 +2,31 @@
 
 namespace Tests;
 
+use Mockery;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase {
+
+    public $m;
+
+    function setUp () {
+
+        $this->m = new Mockery;
+
+        parent::setUp();
+    }
+
+    /**
+     * Clear mockery after every test in preparation for a new mock.
+     *
+     * @return void
+     */
+    function tearDown() {
+
+        $this->m->close();
+
+        parent::tearDown();
+    }
 
     /**
      * Register package.
@@ -17,6 +39,12 @@ abstract class TestCase extends BaseTestCase {
         return [ \KingFlamez\Rave\RaveServiceProvider::class ];
     }
 
+    /**
+     * Get alias packages from app.
+     *
+     * @param  \illuminate\Foundation\Application $app
+     * @return array      Aliases.
+     */
     protected function getPackageAliases($app)
     {
         return [
@@ -32,6 +60,11 @@ abstract class TestCase extends BaseTestCase {
      */
     protected function getEnvironmentSetUp($app)
     {
-        $app['config']->set("rave.prefix", "rave");
+        $envVars = (array) include_once __DIR__ . "/Stubs/env.php";
+
+        array_walk($envVars, function ($value, $key) use (&$app) {
+
+            $app["config"]->set("rave.{$key}", $value);
+        });
     }
 }
