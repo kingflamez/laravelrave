@@ -2,8 +2,8 @@
 
 namespace KingFlamez\Rave;
 
-use Log;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use Unirest\Request;
 use Unirest\Request\Body;
 
@@ -50,7 +50,6 @@ class Rave {
         $prefix = Config::get('rave.prefix');
         $overrideRefWithPrefix = false;
         // create a log channel
-        Log::useDailyFiles(storage_path().'/logs/Flutterwave rave/rave.log');
 
         $this->publicKey = Config::get('rave.publicKey');
         $this->secretKey = Config::get('rave.secretKey');
