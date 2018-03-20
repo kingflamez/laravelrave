@@ -3,6 +3,7 @@
 namespace KingFlamez\Rave;
 
 use Log;
+use stdClass;
 use Unirest\Request;
 use Unirest\Request\Body;
 use Illuminate\Support\Facades\Config;
@@ -505,22 +506,8 @@ class Rave {
 
         //check the status is success
         if ($response->body && $response->body->status === "success") {
-            if($response->body && $response->body->data && $response->body->data->status === "successful"){
-                Log::notice('Requeryed a successful transaction....'.json_encode($response->body->data));
-                // Handle successful
-                if(isset($this->handler)){
-                    $this->handler->onSuccessful($response->body->data);
-                }else{
-                    return $response->body->data;
-                }
-            }elseif($response->body && $response->body->data && $response->body->data->status === "failed"){
-                // Handle Failure
-                Log::warning('Requeryed a failed transaction....'.json_encode($response->body->data));
-                if(isset($this->handler)){
-                    $this->handler->onFailure($response->body->data);
-                }else{
-                    return $response->body->data;
-                }
+            if($response->body && $response->body->data) {
+                return $this->feedbackFromSource($response);
             }else{
                 // Handled an undecisive transaction. Probably timed out.
                 Log::warning('Requeryed an undecisive transaction....'.json_encode($response->body->data));
@@ -603,6 +590,34 @@ class Rave {
             return $collection->toJson();
         }
         return $this;
+    }
+
+    function requeryAction(stdClass $data, string $handler, string $log, $logType = "notice") {
+
+        Log::{$logType}($log.json_encode($data));
+
+        if(isset($this->handler)) {
+            $this->handler->{"on".ucfirst($handler)}($data);
+        }else{
+            return $data;
+        }
+
+        return $this;
+    }
+
+    function feedbackFromSource(stdClass $response) {
+        $feedback = [
+            "successful" => ["successful", "Requeryed a successful transaction...."],
+            "failed" => ["failure", "Requeryed a failed transaction...."]
+        ];
+
+        $status = $response->body->data->status;
+
+        return $this->requeryAction(
+            $response->body->data,
+            $feedback[$status][0],
+            $feedback[$status][1]
+        );
     }
 }
 

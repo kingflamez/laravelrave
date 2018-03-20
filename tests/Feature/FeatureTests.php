@@ -125,7 +125,7 @@ class FeatureTests extends TestCase {
      * @preserveGlobalState disabled
      * @param  string $ref txref
      */
-    function requeryTransactionTest(string $ref) {
+    function requeryTransactionSuccessTest(string $ref) {
 
         $data = [
             'txref' => $ref,
@@ -147,14 +147,76 @@ class FeatureTests extends TestCase {
             ],
         ]);
 
+        $decodedResponse = json_decode($response);
+
         $mRequest = $this->m->mock("alias:".UnirestRequest::class);
         $mRequest->shouldReceive("post")
-                 ->andReturn(json_decode($response));
+                 ->andReturn($decodedResponse);
 
         $rave = new Rave(new Request, $mRequest, new Body);
 
-        $rave->requeryTransaction($ref);
+        $raveResponse = $rave->requeryTransaction($ref);
 
-        $this->assertTrue(true);
+        // Test if data is returned when no handler.
+        $this->assertEquals($decodedResponse->body->data->status, $raveResponse->status);
+
+        $this->setProperty($rave, "handler", new PaymentEventHandler);
+
+        $raveResponse = $rave->requeryTransaction($ref);
+
+        // Tests that an instance of rave is returned when a handler is set
+        $this->assertInstanceOf(Rave::class, $raveResponse);
+    }
+
+    /**
+     * Testing requery transaction.
+     *
+     * @test
+     * @depends paymentCancelledTest
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * @param  string $ref txref
+     */
+    function requeryTransactionFailureTest(string $ref) {
+
+        $data = [
+            'txref' => $ref,
+            'SECKEY' => $this->app->config->get("secretKey"),
+            'last_attempt' => '1'
+            // 'only_successful' => '1'
+        ];
+
+        $url = "https://rave-api-v2.herokuapp.com";
+        $headers = ['Content-Type' => 'application/json'];
+
+        $data = Body::json($data);
+        $response = json_encode([
+            "body" => [
+                "status" => "success",
+                "data" => [
+                    "status" => "failed"
+                ]
+            ],
+        ]);
+
+        $decodedResponse = json_decode($response);
+
+        $mRequest = $this->m->mock("alias:".UnirestRequest::class);
+        $mRequest->shouldReceive("post")
+                 ->andReturn($decodedResponse);
+
+        $rave = new Rave(new Request, $mRequest, new Body);
+
+        $raveResponse = $rave->requeryTransaction($ref);
+
+        // Test if data is returned when no handler.
+        $this->assertEquals($decodedResponse->body->data->status, $raveResponse->status);
+
+        $this->setProperty($rave, "handler", new PaymentEventHandler);
+
+        $raveResponse = $rave->requeryTransaction($ref);
+
+        // Tests that an instance of rave is returned when a handler is set
+        $this->assertInstanceOf(Rave::class, $raveResponse);
     }
 }
