@@ -506,22 +506,22 @@ class Rave {
 
         //check the status is success
         if ($response->body && $response->body->status === "success") {
-            if($response->body && $response->body->data) {
-                return $this->feedbackFromSource($response);
-            }else{
+            if ($response->body && property_exists($response->body, "data")) {
+                return $this->feedbackFromSource($response->body->data, $response->body->data->status);
+
+            } else {
                 // Handled an undecisive transaction. Probably timed out.
-                Log::warning('Requeryed an undecisive transaction....'.json_encode($response->body->data));
+                Log::warning('Requeryed an undecisive transaction....'.json_encode($response->body));
                 // I will requery again here. Just incase we have some devs that cannot setup a queue for requery. I don't like this.
-                if($this->requeryCount > 4){
+                if ($this->requeryCount > 4) {
                     // Now you have to setup a queue by force. We couldn't get a status in 5 requeries.
                     if(isset($this->handler)){
                         $this->handler->onTimeout($this->txref, $response->body);
                     }else{
                         return $response->body;
                     }
-                }else{
+                } else {
                     Log::notice('delaying next requery for 3 seconds');
-                    sleep(3);
                     Log::notice('Now retrying requery...');
                     $this->requeryTransaction($this->txref);
                 }
@@ -537,7 +537,6 @@ class Rave {
         }
         return $this;
     }
-
 
     /**
      * Generates the final json to be used in configuring the payment call to the rave payment gateway
@@ -579,7 +578,7 @@ class Rave {
      * @param string $referenceNumber This should be the reference number of the transaction that was canceled
      * @return object
      * */
-    function paymentCanceled($referenceNumber){
+    function paymentCanceled($referenceNumber) {
         $this->txref = $referenceNumber;
         Log::notice('Payment was canceled by user..'.$this->txref);
         if(isset($this->handler)){
@@ -592,7 +591,16 @@ class Rave {
         return $this;
     }
 
-    function requeryAction(stdClass $data, string $handler, string $log, $logType = "notice") {
+    /**
+     * Requery action function .
+     *
+     * @param  stdClass $data
+     * @param  string   $handler Handler to call.
+     * @param  string   $log     Log message.
+     * @param  string   $logType Log type.
+     * @return stdClass | \KingFlamez\Rave\Rave
+     */
+    protected function requeryAction (stdClass $data, string $handler, string $log, $logType = "notice") {
 
         Log::{$logType}($log.json_encode($data));
 
@@ -605,16 +613,22 @@ class Rave {
         return $this;
     }
 
-    function feedbackFromSource(stdClass $response) {
+    /**
+     * Feedback for requery.
+     *
+     * @param  stdClass $response
+     * @return stdClass | \KingFlamez\Rave\Rave
+     */
+    protected function feedbackFromSource (stdClass $data, string $status) {
         $feedback = [
-            "successful" => ["successful", "Requeryed a successful transaction...."],
-            "failed" => ["failure", "Requeryed a failed transaction...."]
+            "successful" => ["successful", "Requeryed a successful transaction..."],
+            "failed" => ["failure", "Requeryed a failed transaction..."],
+            "error" => ["requeryError", "Requery call returned error for transaction reference..."],
+            "timeout" => ["timeout", "Requeryed an undecisive transaction..."],
         ];
 
-        $status = $response->body->data->status;
-
         return $this->requeryAction(
-            $response->body->data,
+            $data,
             $feedback[$status][0],
             $feedback[$status][1]
         );

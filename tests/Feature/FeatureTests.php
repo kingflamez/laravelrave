@@ -117,15 +117,16 @@ class FeatureTests extends TestCase {
     }
 
     /**
-     * Testing requery transaction.
+     * Testing requery transactions.
      *
      * @test
      * @depends paymentCancelledTest
+     * @dataProvider providesResponse
      * @runInSeparateProcess
      * @preserveGlobalState disabled
      * @param  string $ref txref
      */
-    function requeryTransactionSuccessTest(string $ref) {
+    function requeryTransactionTransactionTest($mResponse, string $ref) {
 
         $data = [
             'txref' => $ref,
@@ -138,14 +139,7 @@ class FeatureTests extends TestCase {
         $headers = ['Content-Type' => 'application/json'];
 
         $data = Body::json($data);
-        $response = json_encode([
-            "body" => [
-                "status" => "success",
-                "data" => [
-                    "status" => "successful"
-                ]
-            ],
-        ]);
+        $response = json_encode($mResponse);
 
         $decodedResponse = json_decode($response);
 
@@ -158,7 +152,7 @@ class FeatureTests extends TestCase {
         $raveResponse = $rave->requeryTransaction($ref);
 
         // Test if data is returned when no handler.
-        $this->assertEquals($decodedResponse->body->data->status, $raveResponse->status);
+        // $this->assertEquals($decodedResponse->body->status, $raveResponse->status);
 
         $this->setProperty($rave, "handler", new PaymentEventHandler);
 
@@ -169,54 +163,48 @@ class FeatureTests extends TestCase {
     }
 
     /**
-     * Testing requery transaction.
+     * Provides data for all events of requery transaction.
      *
-     * @test
-     * @depends paymentCancelledTest
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     * @param  string $ref txref
+     * @return array
      */
-    function requeryTransactionFailureTest(string $ref) {
+    function providesResponse () {
 
-        $data = [
-            'txref' => $ref,
-            'SECKEY' => $this->app->config->get("secretKey"),
-            'last_attempt' => '1'
-            // 'only_successful' => '1'
-        ];
-
-        $url = "https://rave-api-v2.herokuapp.com";
-        $headers = ['Content-Type' => 'application/json'];
-
-        $data = Body::json($data);
-        $response = json_encode([
-            "body" => [
-                "status" => "success",
-                "data" => [
-                    "status" => "failed"
+        return [
+            [
+                [
+                    "body" => [
+                        "status" => "unknown",
+                        "data" => ["status", "unknown"]
+                    ],
+                ],
+            ],
+            [
+                [
+                    "body" => [
+                        "status" => "success",
+                    ],
                 ]
             ],
-        ]);
-
-        $decodedResponse = json_decode($response);
-
-        $mRequest = $this->m->mock("alias:".UnirestRequest::class);
-        $mRequest->shouldReceive("post")
-                 ->andReturn($decodedResponse);
-
-        $rave = new Rave(new Request, $mRequest, new Body);
-
-        $raveResponse = $rave->requeryTransaction($ref);
-
-        // Test if data is returned when no handler.
-        $this->assertEquals($decodedResponse->body->data->status, $raveResponse->status);
-
-        $this->setProperty($rave, "handler", new PaymentEventHandler);
-
-        $raveResponse = $rave->requeryTransaction($ref);
-
-        // Tests that an instance of rave is returned when a handler is set
-        $this->assertInstanceOf(Rave::class, $raveResponse);
+            [
+                [
+                    "body" => [
+                        "status" => "success",
+                        "data" => [
+                            "status" => "failed"
+                        ]
+                    ],
+                ]
+            ],
+            [
+                [
+                    "body" => [
+                        "status" => "success",
+                        "data" => [
+                            "status" => "successful"
+                        ]
+                    ],
+                ]
+            ]
+        ];
     }
 }
