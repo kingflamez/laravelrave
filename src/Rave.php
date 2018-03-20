@@ -67,7 +67,7 @@ class Rave {
         $this->env = Config::get('rave.env');
         $this->customLogo = Config::get('rave.logo');
         $this->customTitle = Config::get('rave.title');
-        $this->transactionPrefix = $overrideRefWithPrefix ? $prefix : $prefix.'_';
+        $this->transactionPrefix = $prefix.'_';
         $this->overrideTransactionReference = $overrideRefWithPrefix;
 
         $this->createReferenceNumber();
@@ -81,7 +81,7 @@ class Rave {
      * Generates a checksum value for the information to be sent to the payment gateway
      * @return object
      * */
-    function createCheckSum(){
+    public function createCheckSum(){
         Log::notice('Generating Checksum....');
         $options = array(
             "PBFPubKey" => $this->publicKey,
@@ -122,7 +122,7 @@ class Rave {
      * Generates a transaction reference number for the transactions
      * @return object
      * */
-    function createReferenceNumber(){
+    public function createReferenceNumber(){
         Log::notice('Generating Reference Number....');
         if($this->overrideTransactionReference){
             $this->txref = $this->transactionPrefix;
@@ -137,7 +137,7 @@ class Rave {
      * gets the current transaction reference number for the transaction
      * @return string
      * */
-    function getReferenceNumber(){
+    public function getReferenceNumber(){
         return $this->txref;
     }
 
@@ -185,7 +185,7 @@ class Rave {
      * @param mixed $amount Transaction amount (could be integer or double)
      * @return object
      * */
-    function setAmount($amount){
+    public function setAmount($amount){
         $this->amount = $amount;
         return $this;
     }
@@ -194,7 +194,7 @@ class Rave {
      * gets the transaction amount
      * @return string
      * */
-    function getAmount(){
+    public function getAmount(){
         return $this->amount;
     }
 
@@ -203,7 +203,7 @@ class Rave {
      * @param string $paymentMethod The allowed payment methods. Can be card, account or both
      * @return object
      * */
-    function setPaymentMethod(string $paymentMethod){
+    public function setPaymentMethod(string $paymentMethod){
         $this->paymentMethod = $paymentMethod;
         return $this;
     }
@@ -212,7 +212,7 @@ class Rave {
      * gets the allowed payment methods
      * @return string
      * */
-    function getPaymentMethod(){
+    public function getPaymentMethod(){
         return $this->paymentMethod;
     }
 
@@ -221,7 +221,7 @@ class Rave {
      * @param string $customDescription The description of the transaction
      * @return object
      * */
-    function setDescription (string $customDescription) {
+    public function setDescription (string $customDescription) {
         $this->customDescription = $customDescription;
         return $this;
     }
@@ -230,7 +230,7 @@ class Rave {
      * gets the transaction description
      * @return string
      * */
-    function getDescription(){
+    public function getDescription(){
         return $this->customDescription;
     }
 
@@ -239,7 +239,7 @@ class Rave {
      * @param string $customLogo Your Logo
      * @return object
      * */
-    function setLogo(string $customLogo){
+    public function setLogo(string $customLogo){
         $this->customLogo = $customLogo;
         return $this;
     }
@@ -248,7 +248,7 @@ class Rave {
      * gets the payment page logo
      * @return string
      * */
-    function getLogo(){
+    public function getLogo(){
         return $this->customLogo;
     }
 
@@ -257,7 +257,7 @@ class Rave {
      * @param string $customTitle A title for the payment. It can be the product name, your business name or anything short and descriptive
      * @return object
      * */
-    function setTitle(string $customTitle){
+    public function setTitle(string $customTitle){
         $this->customTitle = $customTitle;
         return $this;
     }
@@ -266,7 +266,7 @@ class Rave {
      * gets the payment page title
      * @return string
      * */
-    function getTitle(){
+    public function getTitle(){
         return $this->customTitle;
     }
 
@@ -275,7 +275,7 @@ class Rave {
      * @param string $country The transaction country. Can be NG, US, KE, GH and ZA
      * @return object
      * */
-    function setCountry(string $country){
+    public function setCountry(string $country){
         $this->country = $country;
         return $this;
     }
@@ -284,7 +284,7 @@ class Rave {
      * gets the transaction country
      * @return string
      * */
-    function getCountry(){
+    public function getCountry(){
         return $this->country;
     }
 
@@ -293,7 +293,7 @@ class Rave {
      * @param string $currency The transaction currency. Can be NGN, GHS, KES, ZAR, USD, EUR and GBP
      * @return object
      * */
-    function setCurrency(string $currency){
+    public function setCurrency(string $currency){
         $this->currency = $currency;
         return $this;
     }
@@ -302,7 +302,7 @@ class Rave {
      * gets the transaction currency
      * @return string
      * */
-    function getCurrency(){
+    public function getCurrency(){
         return $this->currency;
     }
 
@@ -311,7 +311,7 @@ class Rave {
      * @param string $customerEmail This is the paying customer's email
      * @return object
      * */
-    function setEmail(string $customerEmail){
+    public function setEmail(string $customerEmail){
         $this->customerEmail = $customerEmail;
         return $this;
     }
@@ -320,7 +320,7 @@ class Rave {
      * gets the customer email
      * @return string
      * */
-    function getEmail(){
+    public function getEmail(){
         return $this->customerEmail;
     }
 
@@ -329,7 +329,7 @@ class Rave {
      * @param string $customerFirstname This is the paying customer's firstname
      * @return object
      * */
-    function setFirstname(string $customerFirstname){
+    public function setFirstname(string $customerFirstname){
         $this->customerFirstname = $customerFirstname;
         return $this;
     }
@@ -338,7 +338,7 @@ class Rave {
      * gets the customer firstname
      * @return string
      * */
-    function getFirstname(){
+    public function getFirstname(){
         return $this->customerFirstname;
     }
 
@@ -347,7 +347,7 @@ class Rave {
      * @param string $customerLastname This is the paying customer's lastname
      * @return object
      * */
-    function setLastname(string $customerLastname){
+    public function setLastname(string $customerLastname){
         $this->customerLastname = $customerLastname;
         return $this;
     }
@@ -356,7 +356,7 @@ class Rave {
      * gets the customer lastname
      * @return string
      * */
-    function getLastname(){
+    public function getLastname(){
         return $this->customerLastname;
     }
 
@@ -365,7 +365,7 @@ class Rave {
      * @param string $customerPhone This is the paying customer's phonenumber
      * @return object
      * */
-    function setPhoneNumber(string $customerPhone){
+    public function setPhoneNumber(string $customerPhone){
         $this->customerPhone = $customerPhone;
         return $this;
     }
@@ -374,7 +374,7 @@ class Rave {
      * gets the customer phonenumber
      * @return string
      * */
-    function getPhoneNumber(){
+    public function getPhoneNumber(){
         return $this->customerPhone;
     }
 
@@ -383,7 +383,7 @@ class Rave {
      * @param string $payButtonText This is the text that should appear on the payment button on the Rave payment gateway.
      * @return object
      * */
-    function setPayButtonText($payButtonText){
+    public function setPayButtonText($payButtonText){
         $this->payButtonText = $payButtonText;
         return $this;
     }
@@ -392,7 +392,7 @@ class Rave {
      * gets payment page button text
      * @return string
      * */
-    function getPayButtonText(){
+    public function getPayButtonText(){
         return $this->payButtonText;
     }
 
@@ -401,7 +401,7 @@ class Rave {
      * @param string $redirectUrl This is where the Rave payment gateway will redirect to after completing a payment
      * @return object
      * */
-    function setRedirectUrl($redirectUrl){
+    public function setRedirectUrl($redirectUrl){
         $this->redirectUrl = $redirectUrl;
         return $this;
     }
@@ -410,7 +410,7 @@ class Rave {
      * gets the transaction redirect url
      * @return string
      * */
-    function getRedirectUrl(){
+    public function getRedirectUrl(){
         return $this->redirectUrl;
     }
 
@@ -419,7 +419,7 @@ class Rave {
      * @param array $meta This are the other information you will like to store with the transaction. It is a key => value array. eg. PNR for airlines, product colour or attributes. Example. array('name' => 'femi')
      * @return object
      * */
-    function setMetaData($meta){
+    public function setMetaData($meta){
         array_push($this->meta, $meta);
         return $this;
     }
@@ -428,10 +428,9 @@ class Rave {
      * gets the transaction meta data
      * @return string
      * */
-    function getMetaData(){
+    public function getMetaData(){
         return $this->meta;
     }
-
 
     /**
      * Sets the data from the form
@@ -471,7 +470,7 @@ class Rave {
      * @param object $handler This is a class that implements the Event Handler Interface
      * @return object
      * */
-    function eventHandler(RaveEventHandlerInterface $handler){
+    public function eventHandler(RaveEventHandlerInterface $handler){
         $this->handler = $handler;
         return $this;
     }
@@ -479,9 +478,9 @@ class Rave {
     /**
      * Requerys a previous transaction from the Rave payment gateway
      * @param string $referenceNumber This should be the reference number of the transaction you want to requery
-     * @return object
+     * @return mixed
      * */
-    function requeryTransaction($referenceNumber){
+    public function requeryTransaction($referenceNumber){
         $this->txref = $referenceNumber;
         $this->requeryCount++;
         Log::notice('Requerying Transaction....'.$this->txref);
@@ -542,7 +541,7 @@ class Rave {
      * Generates the final json to be used in configuring the payment call to the rave payment gateway
      * @return string
      * */
-    function initialize(string $redirectURL){
+    public function initialize(string $redirectURL){
         $this->setData($redirectURL);
 
         if (!empty($this->request->metadata)) {
@@ -576,9 +575,9 @@ class Rave {
     /**
      * Handle canceled payments with this method
      * @param string $referenceNumber This should be the reference number of the transaction that was canceled
-     * @return object
+     * @return mixed
      * */
-    function paymentCanceled($referenceNumber) {
+    public function paymentCanceled($referenceNumber) {
         $this->txref = $referenceNumber;
         Log::notice('Payment was canceled by user..'.$this->txref);
         if(isset($this->handler)){
