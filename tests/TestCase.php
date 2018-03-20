@@ -9,9 +9,21 @@ abstract class TestCase extends BaseTestCase {
 
     public $m;
 
+    protected $envVars;
+
+    protected $data;
+
+    protected $formData;
+
     function setUp () {
 
         $this->m = new Mockery;
+
+        $this->envVars = (array) include __DIR__ . "/Stubs/env.php";
+
+        $this->data = (array) include __DIR__ . "/Stubs/request_data.php";
+
+        $this->formData = $this->data["form"];
 
         parent::setUp();
     }
@@ -60,9 +72,7 @@ abstract class TestCase extends BaseTestCase {
      */
     protected function getEnvironmentSetUp($app)
     {
-        $envVars = (array) include_once __DIR__ . "/Stubs/env.php";
-
-        array_walk($envVars, function ($value, $key) use (&$app) {
+        array_walk($this->envVars, function ($value, $key) use (&$app) {
 
             $app["config"]->set("rave.{$key}", $value);
         });

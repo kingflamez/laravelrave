@@ -156,6 +156,32 @@ class UnitTests extends TestCase {
     }
 
     /**
+     * Testing if keys are modified using setkeys.
+     *
+     * @test
+     * @depends initiateRaveFromApp
+     * @return void
+     */
+    function settingKeys(Rave $rave) {
+
+        $newPublicKey = "public_key";
+        $newSecretKey = "secret_key";
+        $rave->setKeys($newPublicKey, $newSecretKey);
+        $reflector = new ReflectionClass($rave);
+        $reflector = $reflector->getProperties(ReflectionProperty::IS_PROTECTED);
+
+        $keys = array_map(function($value) use ($rave, $newPublicKey, $newSecretKey) {
+            $name = $value->getName();
+            if ($name === "publicKey" || $name === "secretKey") {
+                $value->setAccessible(true);
+                $key = $value->getValue($rave);
+                $this->assertEquals(${"new".ucfirst($name)}, $key);
+            }
+        }, $reflector);
+
+    }
+
+    /**
      * Testing if payment method is modified using setMethod.
      *
      * @test

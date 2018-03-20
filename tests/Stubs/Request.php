@@ -19,7 +19,7 @@ class Request extends BaseRequest {
 
     function __construct( ) {
 
-        $data = (array) include_once __DIR__ . "/request_data.php";
+        $data = (array) include __DIR__ . "/request_data.php";
 
         array_walk($data["form"], function($value, $key) {
 

@@ -5,8 +5,8 @@ namespace KingFlamez\Rave;
 use Log;
 use Unirest\Request;
 use Unirest\Request\Body;
-use Illuminate\Http\Request as LaravelRequest;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Http\Request as LaravelRequest;
 
 /**
  * Flutterwave's Rave payment laravel package
@@ -45,13 +45,17 @@ class Rave {
     protected $overrideTransactionReference;
     protected $requeryCount = 0;
     protected $request;
+    protected $unirestRequest;
+    protected $body;
 
     /**
      * Construct
      * @return object
      * */
-    function __construct (LaravelRequest $request) {
+    function __construct (LaravelRequest $request, Request $unirestRequest, Body $body) {
         $this->request = $request;
+        $this->body = $body;
+        $this->unirestRequest= $unirestRequest;
         $prefix = Config::get('rave.prefix');
         $overrideRefWithPrefix = false;
         // create a log channel
@@ -493,11 +497,11 @@ class Rave {
 
         // make request to endpoint using unirest.
         $headers = array('Content-Type' => 'application/json');
-        $body = Body::json($data);
+        $body = $this->body->json($data);
         $url = $this->baseUrl.'/flwv3-pug/getpaidx/api/xrequery';
 
         // Make `POST` request and handle response with unirest
-        $response = Request::post($url, $headers, $body);
+        $response = $this->unirestRequest->post($url, $headers, $body);
 
         //check the status is success
         if ($response->body && $response->body->status === "success") {

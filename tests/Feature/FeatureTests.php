@@ -5,8 +5,11 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Tests\Stubs\Request;
 use KingFlamez\Rave\Rave;
+use Unirest\Request\Body;
+use Illuminate\Support\Collection;
 use Tests\Stubs\PaymentEventHandler;
 use Tests\Concerns\ExtractProperties;
+use Unirest\Request as UnirestRequest;
 
 class FeatureTests extends TestCase {
 
@@ -16,15 +19,13 @@ class FeatureTests extends TestCase {
      * Test if parameters are set on setData.
      *
      * @test
-     * @return void
+     * @return \KingFlamez\Rave\Rave
      */
     function getParams () {
 
         $request = new Request;
-        $rave = new Rave($request);
+        $rave = new Rave($request, new UnirestRequest, new Body);
         $rave = $rave->setData("http://localhost");
-        // $properties = include __DIR__ . "/../Stubs/request_data.php";
-        // $properties = $this->extractProperties($rave, ...$properties["class"]);
 
         $this->assertInstanceOf(Rave::class, $rave);
         return $rave;
@@ -60,6 +61,100 @@ class FeatureTests extends TestCase {
      */
     function paymentInitialize(Rave $rave) {
 
-        $rave->setHandler(new PaymentEventHandler)->initialize("http://localhost");
+        $response = $rave->eventHandler(new PaymentEventHandler)->initialize("http://localhost");
+
+        $values = json_decode($response, true);
+
+        $class = $this->data["class"];
+
+        $this->assertArrayHasKey("meta", $values);
+        $this->assertArrayHasKey("txref", $values);
+        $this->assertArrayHasKey("amount", $values);
+        $this->assertArrayHasKey("country", $values);
+        $this->assertArrayHasKey("currency", $values);
+        $this->assertArrayHasKey("PBFPubKey", $values);
+        $this->assertArrayHasKey("custom_logo", $values);
+        $this->assertArrayHasKey("redirect_url", $values);
+        $this->assertArrayHasKey("integrity_hash", $values);
+        $this->assertArrayHasKey("payment_method", $values);
+        $this->assertArrayHasKey("customer_phone", $values);
+        $this->assertArrayHasKey("customer_email", $values);
+        $this->assertArrayHasKey("pay_button_text", $values);
+        $this->assertArrayHasKey("customer_lastname", $values);
+        $this->assertArrayHasKey("custom_description", $values);
+        $this->assertArrayHasKey("customer_firstname", $values);
+    }
+
+    /**
+     * Test if proper actions are taken when payment is cancelled.
+     *
+     * @test
+     * @return void
+     */
+    function paymentCancelledTest() {
+
+        $rave = new Rave(new Request, new UnirestRequest, new Body);
+        $rave = $rave->createReferenceNumber();
+        $ref = $rave->getReferenceNumber();
+
+        // This section tests if json is returned when no handler is set.
+        $returned = $rave->paymentCanceled($ref);
+
+        $this->assertInternalType("string", $returned);
+
+        // Tests if json has certain keys when payment is cancelled.
+        $returned = json_decode($returned, true);
+
+        $this->assertArrayHasKey("txref", $returned);
+        $this->assertArrayHasKey("status", $returned);
+
+        // This section tests if instance of rave is returned when a handler is set.
+        $rave = $rave->eventHandler(new PaymentEventHandler)->paymentCanceled($ref);
+
+        $this->assertInstanceOf(Rave::class, $rave);
+
+        return $ref;
+    }
+
+    /**
+     * Testing requery transaction.
+     *
+     * @test
+     * @depends paymentCancelledTest
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     * @param  string $ref txref
+     */
+    function requeryTransactionTest(string $ref) {
+
+        $data = [
+            'txref' => $ref,
+            'SECKEY' => $this->app->config->get("secretKey"),
+            'last_attempt' => '1'
+            // 'only_successful' => '1'
+        ];
+
+        $url = "https://rave-api-v2.herokuapp.com";
+        $headers = ['Content-Type' => 'application/json'];
+
+        $data = Body::json($data);
+        $response = json_encode([
+            "body" => [
+                "status" => "success",
+                "data" => [
+                    "status" => "successful"
+                ]
+            ],
+        ]);
+
+        $mRequest = $this->m->mock("alias:".UnirestRequest::class);
+        $mRequest->shouldReceive("post")
+                 ->andReturn(json_decode($response));
+
+        $rave = new Rave(new Request, $mRequest, new Body);
+
+        $rave->requeryTransaction($ref);
+
+        $this->assertTrue(true);
     }
 }
