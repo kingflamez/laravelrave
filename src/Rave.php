@@ -145,7 +145,7 @@ class Rave {
      * @param string $secretKey Your Rave secretKey. Sign up on https://rave.flutterwave.com to get one from your settings page
      * @return object
      * */
-    public function setKeys(string $publicKey, string $secretKey)
+    public function setKeys($publicKey, $secretKey)
     {
         $this->publicKey = $publicKey;
         $this->secretKey = $secretKey;
