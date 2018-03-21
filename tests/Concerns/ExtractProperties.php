@@ -14,7 +14,7 @@ trait ExtractProperties {
      * @param  string $name  Property name.
      * @return array        Extracted name and value of property.
      */
-    function extractProperty($class, string $name) {
+    function extractProperty($class, $name) {
 
         $reflector = new ReflectionClass($class);
         $property = $reflector->getProperty($name);
@@ -33,7 +33,7 @@ trait ExtractProperties {
      * @param string $name  Property name
      * @param mixed $value
      */
-    function setProperty($class, string $name, $value = null) {
+    function setProperty($class, $name, $value = null) {
 
         $reflector = new ReflectionClass($class);
         $property = $reflector->getProperty($name);

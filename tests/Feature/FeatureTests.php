@@ -126,7 +126,7 @@ class FeatureTests extends TestCase {
      * @preserveGlobalState disabled
      * @param  string $ref txref
      */
-    function requeryTransactionTransactionTest($mResponse, string $ref) {
+    function requeryTransactionTransactionTest($mResponse, $ref) {
 
         $data = [
             'txref' => $ref,
