@@ -27,7 +27,7 @@ class FeatureTests extends TestCase {
         $rave = new Rave($request, new UnirestRequest, new Body);
         $rave = $rave->setData("http://localhost");
 
-        $this->assertInstanceOf(Rave::class, $rave);
+        $this->assertInstanceOf("KingFlamez\Rave\Rave", $rave);
         return $rave;
     }
 
@@ -111,7 +111,7 @@ class FeatureTests extends TestCase {
         // This section tests if instance of rave is returned when a handler is set.
         $rave = $rave->eventHandler(new PaymentEventHandler)->paymentCanceled($ref);
 
-        $this->assertInstanceOf(Rave::class, $rave);
+        $this->assertInstanceOf("KingFlamez\Rave\Rave", $rave);
 
         return $ref;
     }
@@ -143,7 +143,7 @@ class FeatureTests extends TestCase {
 
         $decodedResponse = json_decode($response);
 
-        $mRequest = $this->m->mock("alias:".UnirestRequest::class);
+        $mRequest = $this->m->mock("alias:Unirest\Request");
         $mRequest->shouldReceive("post")
                  ->andReturn($decodedResponse);
 
@@ -159,7 +159,7 @@ class FeatureTests extends TestCase {
         $raveResponse = $rave->requeryTransaction($ref);
 
         // Tests that an instance of rave is returned when a handler is set
-        $this->assertInstanceOf(Rave::class, $raveResponse);
+        $this->assertInstanceOf("KingFlamez\Rave\Rave", $raveResponse);
     }
 
     /**

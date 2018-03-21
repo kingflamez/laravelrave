@@ -398,7 +398,7 @@ class UnitTests extends TestCase {
         $rave->eventHandler($newEventHandler);
         $handler = $this->extractProperty($rave, "handler");
 
-        $this->assertInstanceOf(PaymentEventHandler::class, $handler["value"]);
+        $this->assertInstanceOf("Tests\Stubs\PaymentEventHandler", $handler["value"]);
     }
 
     /**
