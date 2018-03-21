@@ -1,11 +1,13 @@
-<?php 
+<?php
 
 namespace KingFlamez\Rave;
 
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Log;
+use stdClass;
 use Unirest\Request;
 use Unirest\Request\Body;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Http\Request as LaravelRequest;
 
 /**
  * Flutterwave's Rave payment laravel package
@@ -35,93 +37,92 @@ class Rave {
     protected $env = 'staging';
     protected $transactionPrefix;
     protected $handler;
-    protected $stagingUrl = 'https://rave-api-v2.herokuapp.com';
-    protected $liveUrl = 'https://api.ravepay.co';
+    protected $urls = [
+        "live" => "https://api.ravepay.co",
+        "others" => "https://rave-api-v2.herokuapp.com",
+    ];
     protected $baseUrl;
     protected $transactionData;
     protected $overrideTransactionReference;
     protected $requeryCount = 0;
-    
+    protected $request;
+    protected $unirestRequest;
+    protected $body;
+
     /**
      * Construct
      * @return object
      * */
-    function __construct(){
+    function __construct (LaravelRequest $request, Request $unirestRequest, Body $body) {
+        $this->request = $request;
+        $this->body = $body;
+        $this->unirestRequest= $unirestRequest;
         $prefix = Config::get('rave.prefix');
         $overrideRefWithPrefix = false;
         // create a log channel
+        Log::useDailyFiles(storage_path().'/logs/Flutterwave rave/rave.log');
 
         $this->publicKey = Config::get('rave.publicKey');
         $this->secretKey = Config::get('rave.secretKey');
         $this->env = Config::get('rave.env');
         $this->customLogo = Config::get('rave.logo');
         $this->customTitle = Config::get('rave.title');
-        $this->transactionPrefix = $overrideRefWithPrefix ? $prefix : $prefix.'_';
+        $this->transactionPrefix = $prefix.'_';
         $this->overrideTransactionReference = $overrideRefWithPrefix;
 
         $this->createReferenceNumber();
-        
-        if($this->env === 'staging'){
-            $this->baseUrl = $this->stagingUrl;
-        }elseif($this->env === 'live'){
-            $this->baseUrl = $this->liveUrl;
-        }else{
-            $this->baseUrl = $this->stagingUrl;
-        }
-        
+
+        $this->baseUrl = $this->urls[($this->env === "live" ? "$this->env" : "others")];
+
         Log::notice('Rave Class Initializes....');
-        
-        return $this;
     }
-    
-    
+
     /**
      * Generates a checksum value for the information to be sent to the payment gateway
      * @return object
      * */
-    function createCheckSum(){
+    public function createCheckSum(){
         Log::notice('Generating Checksum....');
-        $options = array( 
-            "PBFPubKey" => $this->publicKey, 
-            "amount" => $this->amount, 
-            "customer_email" => $this->customerEmail, 
-            "customer_firstname" => $this->customerFirstname, 
-            "txref" => $this->txref, 
-            "payment_method" => $this->paymentMethod, 
-            "customer_lastname" => $this->customerLastname, 
-            "country" => $this->country, 
-            "currency" => $this->currency, 
-            "custom_description" => $this->customDescription, 
-            "custom_logo" => $this->customLogo, 
-            "custom_title" => $this->customTitle, 
+        $options = array(
+            "PBFPubKey" => $this->publicKey,
+            "amount" => $this->amount,
+            "customer_email" => $this->customerEmail,
+            "customer_firstname" => $this->customerFirstname,
+            "txref" => $this->txref,
+            "payment_method" => $this->paymentMethod,
+            "customer_lastname" => $this->customerLastname,
+            "country" => $this->country,
+            "currency" => $this->currency,
+            "custom_description" => $this->customDescription,
+            "custom_logo" => $this->customLogo,
+            "custom_title" => $this->customTitle,
             "customer_phone" => $this->customerPhone,
             "pay_button_text" => $this->payButtonText,
             "redirect_url" => $this->redirectUrl,
             "hosted_payment" => 1
         );
-        
+
         ksort($options);
-        
+
         $this->transactionData = $options;
-        
+
         $hashedPayload = '';
-        
-        foreach($options as $key => $value){
+
+        foreach($options as $value){
             $hashedPayload .= $value;
         }
 
         $completeHash = $hashedPayload.$this->secretKey;
-        $hash = hash('sha256', $completeHash);
-        
-        $this->integrityHash = $hash;
+
+        $this->integrityHash = hash('sha256', $completeHash);
         return $this;
     }
-    
+
     /**
      * Generates a transaction reference number for the transactions
      * @return object
      * */
-    function createReferenceNumber(){
+    public function createReferenceNumber(){
         Log::notice('Generating Reference Number....');
         if($this->overrideTransactionReference){
             $this->txref = $this->transactionPrefix;
@@ -131,15 +132,14 @@ class Rave {
         Log::notice('Generated Reference Number....'.$this->txref);
         return $this;
     }
-    
+
     /**
      * gets the current transaction reference number for the transaction
      * @return string
      * */
-    function getReferenceNumber(){
+    public function getReferenceNumber(){
         return $this->txref;
     }
-
 
     /**
      * Sets the public and secret key
@@ -147,7 +147,7 @@ class Rave {
      * @param string $secretKey Your Rave secretKey. Sign up on https://rave.flutterwave.com to get one from your settings page
      * @return object
      * */
-    public function setKeys($publicKey, $secretKey)
+    public function setKeys(string $publicKey, string $secretKey)
     {
         $this->publicKey = $publicKey;
         $this->secretKey = $secretKey;
@@ -155,282 +155,282 @@ class Rave {
     }
 
     /**
-     * Set the environment 
+     * Set the environment
      * @param string $env This can either be 'staging' or 'live'
      * @return object
      * */
-    public function setEnvironment($env)
+    public function setEnvironment(string $env)
     {
         $this->env = $env;
         return $this;
     }
 
     /**
-     * Set the environment 
+     * Set the environment
      * @param string $prefix This is added to the front of your transaction reference numbers
      * @param boolean $overrideRefWithPrefix Set this parameter to true to use your prefix as the transaction reference
      * @return object
      * */
-    public function setPrefix($prefix, $overrideRefWithPrefix=false)
+    public function setPrefix(string $prefix, $overrideRefWithPrefix = false)
     {
         $this->transactionPrefix = $overrideRefWithPrefix ? $prefix : $prefix.'_';
         $this->overrideTransactionReference = $overrideRefWithPrefix;
         $this->createReferenceNumber();
         return $this;
     }
-    
+
     /**
      * Sets the transaction amount
-     * @param integer $amount Transaction amount
+     *
+     * @param mixed $amount Transaction amount (could be integer or double)
      * @return object
      * */
-    function setAmount($amount){
+    public function setAmount($amount){
         $this->amount = $amount;
         return $this;
     }
-    
+
     /**
      * gets the transaction amount
      * @return string
      * */
-    function getAmount(){
-        return $this;
+    public function getAmount(){
+        return $this->amount;
     }
-    
+
     /**
      * Sets the allowed payment methods
-     * @param string $paymentMethod The allowed payment methods. Can be card, account or both 
+     * @param string $paymentMethod The allowed payment methods. Can be card, account or both
      * @return object
      * */
-    function setPaymentMethod($paymentMethod){
+    public function setPaymentMethod(string $paymentMethod){
         $this->paymentMethod = $paymentMethod;
         return $this;
     }
-    
+
     /**
      * gets the allowed payment methods
      * @return string
      * */
-    function getPaymentMethod(){
-        return $this;
+    public function getPaymentMethod(){
+        return $this->paymentMethod;
     }
-    
+
     /**
      * Sets the transaction description
      * @param string $customDescription The description of the transaction
      * @return object
      * */
-    function setDescription($customDescription){
+    public function setDescription (string $customDescription) {
         $this->customDescription = $customDescription;
         return $this;
     }
-    
+
     /**
      * gets the transaction description
      * @return string
      * */
-    function getDescription(){
+    public function getDescription(){
         return $this->customDescription;
     }
-    
+
     /**
      * Sets the payment page logo
      * @param string $customLogo Your Logo
      * @return object
      * */
-    function setLogo($customLogo){
+    public function setLogo(string $customLogo){
         $this->customLogo = $customLogo;
         return $this;
     }
-    
+
     /**
      * gets the payment page logo
      * @return string
      * */
-    function getLogo(){
+    public function getLogo(){
         return $this->customLogo;
     }
-    
+
     /**
      * Sets the payment page title
-     * @param string $customTitle A title for the payment. It can be the product name, your business name or anything short and descriptive 
+     * @param string $customTitle A title for the payment. It can be the product name, your business name or anything short and descriptive
      * @return object
      * */
-    function setTitle($customTitle){
+    public function setTitle(string $customTitle){
         $this->customTitle = $customTitle;
         return $this;
     }
-    
+
     /**
      * gets the payment page title
      * @return string
      * */
-    function getTitle(){
+    public function getTitle(){
         return $this->customTitle;
     }
-    
+
     /**
      * Sets transaction country
      * @param string $country The transaction country. Can be NG, US, KE, GH and ZA
      * @return object
      * */
-    function setCountry($country){
+    public function setCountry(string $country){
         $this->country = $country;
         return $this;
     }
-    
+
     /**
      * gets the transaction country
      * @return string
      * */
-    function getCountry(){
+    public function getCountry(){
         return $this->country;
     }
-    
+
     /**
      * Sets the transaction currency
      * @param string $currency The transaction currency. Can be NGN, GHS, KES, ZAR, USD, EUR and GBP
      * @return object
      * */
-    function setCurrency($currency){
+    public function setCurrency(string $currency){
         $this->currency = $currency;
         return $this;
     }
-    
+
     /**
      * gets the transaction currency
      * @return string
      * */
-    function getCurrency(){
+    public function getCurrency(){
         return $this->currency;
     }
-    
+
     /**
      * Sets the customer email
      * @param string $customerEmail This is the paying customer's email
      * @return object
      * */
-    function setEmail($customerEmail){
+    public function setEmail(string $customerEmail){
         $this->customerEmail = $customerEmail;
         return $this;
     }
-    
+
     /**
      * gets the customer email
      * @return string
      * */
-    function getEmail(){
+    public function getEmail(){
         return $this->customerEmail;
     }
-    
+
     /**
      * Sets the customer firstname
      * @param string $customerFirstname This is the paying customer's firstname
      * @return object
      * */
-    function setFirstname($customerFirstname){
+    public function setFirstname(string $customerFirstname){
         $this->customerFirstname = $customerFirstname;
         return $this;
     }
-    
+
     /**
      * gets the customer firstname
      * @return string
      * */
-    function getFirstname(){
+    public function getFirstname(){
         return $this->customerFirstname;
     }
-    
+
     /**
      * Sets the customer lastname
      * @param string $customerLastname This is the paying customer's lastname
      * @return object
      * */
-    function setLastname($customerLastname){
+    public function setLastname(string $customerLastname){
         $this->customerLastname = $customerLastname;
         return $this;
     }
-    
+
     /**
      * gets the customer lastname
      * @return string
      * */
-    function getLastname(){
+    public function getLastname(){
         return $this->customerLastname;
     }
-    
+
     /**
      * Sets the customer phonenumber
      * @param string $customerPhone This is the paying customer's phonenumber
      * @return object
      * */
-    function setPhoneNumber($customerPhone){
+    public function setPhoneNumber(string $customerPhone){
         $this->customerPhone = $customerPhone;
         return $this;
     }
-    
+
     /**
      * gets the customer phonenumber
      * @return string
      * */
-    function getPhoneNumber(){
+    public function getPhoneNumber(){
         return $this->customerPhone;
     }
-    
+
     /**
      * Sets the payment page button text
      * @param string $payButtonText This is the text that should appear on the payment button on the Rave payment gateway.
      * @return object
      * */
-    function setPayButtonText($payButtonText){
+    public function setPayButtonText($payButtonText){
         $this->payButtonText = $payButtonText;
         return $this;
     }
-    
+
     /**
      * gets payment page button text
      * @return string
      * */
-    function getPayButtonText(){
+    public function getPayButtonText(){
         return $this->payButtonText;
     }
-    
+
     /**
      * Sets the transaction redirect url
      * @param string $redirectUrl This is where the Rave payment gateway will redirect to after completing a payment
      * @return object
      * */
-    function setRedirectUrl($redirectUrl){
+    public function setRedirectUrl($redirectUrl){
         $this->redirectUrl = $redirectUrl;
         return $this;
     }
-    
+
     /**
      * gets the transaction redirect url
      * @return string
      * */
-    function getRedirectUrl(){
+    public function getRedirectUrl(){
         return $this->redirectUrl;
     }
-    
+
     /**
      * Sets the transaction meta data. Can be called multiple time to set multiple meta data
      * @param array $meta This are the other information you will like to store with the transaction. It is a key => value array. eg. PNR for airlines, product colour or attributes. Example. array('name' => 'femi')
      * @return object
      * */
-    function setMetaData($meta){
+    public function setMetaData($meta){
         array_push($this->meta, $meta);
         return $this;
     }
-    
+
     /**
      * gets the transaction meta data
      * @return string
      * */
-    function getMetaData(){
+    public function getMetaData(){
         return $this->meta;
     }
-    
 
     /**
      * Sets the data from the form
@@ -439,27 +439,27 @@ class Rave {
      * */
     public function setData($redirectURL)
     {
-        $this->setAmount(request()->amount)
-        ->setDescription(request()->description)
-        ->setCountry(request()->country)
-        ->setCurrency(request()->currency)
-        ->setEmail(request()->email)
-        ->setFirstname(request()->firstname)
-        ->setLastname(request()->lastname)
-        ->setPhoneNumber(request()->phonenumber)
-        ->setPayButtonText(request()->pay_button_text)
-        ->setRedirectUrl($redirectURL);
+        $this->setAmount($this->request->amount)
+            ->setDescription($this->request->description)
+            ->setCountry($this->request->country)
+            ->setCurrency($this->request->currency)
+            ->setEmail($this->request->email)
+            ->setFirstname($this->request->firstname)
+            ->setLastname($this->request->lastname)
+            ->setPhoneNumber($this->request->phonenumber)
+            ->setPayButtonText($this->request->pay_button_text)
+            ->setRedirectUrl($redirectURL);
 
-        if (request()->payment_method) {
-            $this->setPaymentMethod(request()->payment_method); // value can be card, account or both
+        if ($this->request->payment_method) {
+            $this->setPaymentMethod($this->request->payment_method); // value can be card, account or both
         }
 
-        if (request()->logo) {
-            $this->setLogo(request()->logo); // This might not be included if you have it set in your .env file
+        if ($this->request->logo) {
+            $this->setLogo($this->request->logo); // This might not be included if you have it set in your .env file
         }
 
-        if (request()->title) {
-            $this->setTitle(request()->title); // This can be left blank if you have it set in your .env file
+        if ($this->request->title) {
+            $this->setTitle($this->request->title); // This can be left blank if you have it set in your .env file
         }
 
         return $this;
@@ -470,17 +470,17 @@ class Rave {
      * @param object $handler This is a class that implements the Event Handler Interface
      * @return object
      * */
-    function eventHandler($handler){
+    public function eventHandler(RaveEventHandlerInterface $handler){
         $this->handler = $handler;
         return $this;
     }
-    
+
     /**
      * Requerys a previous transaction from the Rave payment gateway
      * @param string $referenceNumber This should be the reference number of the transaction you want to requery
-     * @return object
+     * @return mixed
      * */
-    function requeryTransaction($referenceNumber){
+    public function requeryTransaction($referenceNumber){
         $this->txref = $referenceNumber;
         $this->requeryCount++;
         Log::notice('Requerying Transaction....'.$this->txref);
@@ -497,44 +497,30 @@ class Rave {
 
         // make request to endpoint using unirest.
         $headers = array('Content-Type' => 'application/json');
-        $body = Body::json($data);
+        $body = $this->body->json($data);
         $url = $this->baseUrl.'/flwv3-pug/getpaidx/api/xrequery';
 
         // Make `POST` request and handle response with unirest
-        $response = Request::post($url, $headers, $body);
-  
+        $response = $this->unirestRequest->post($url, $headers, $body);
+
         //check the status is success
         if ($response->body && $response->body->status === "success") {
-            if($response->body && $response->body->data && $response->body->data->status === "successful"){
-                Log::notice('Requeryed a successful transaction....'.json_encode($response->body->data));
-                // Handle successful
-                if(isset($this->handler)){
-                    $this->handler->onSuccessful($response->body->data);
-                }else{
-                    return $response->body->data;
-                }
-            }elseif($response->body && $response->body->data && $response->body->data->status === "failed"){
-                // Handle Failure
-                Log::warning('Requeryed a failed transaction....'.json_encode($response->body->data));
-                if(isset($this->handler)){
-                    $this->handler->onFailure($response->body->data);
-                }else{
-                    return $response->body->data;
-                }
-            }else{
+            if ($response->body && property_exists($response->body, "data")) {
+                return $this->feedbackFromSource($response->body->data, $response->body->data->status);
+
+            } else {
                 // Handled an undecisive transaction. Probably timed out.
-                Log::warning('Requeryed an undecisive transaction....'.json_encode($response->body->data));
+                Log::warning('Requeryed an undecisive transaction....'.json_encode($response->body));
                 // I will requery again here. Just incase we have some devs that cannot setup a queue for requery. I don't like this.
-                if($this->requeryCount > 4){
+                if ($this->requeryCount > 4) {
                     // Now you have to setup a queue by force. We couldn't get a status in 5 requeries.
                     if(isset($this->handler)){
                         $this->handler->onTimeout($this->txref, $response->body);
                     }else{
                         return $response->body;
                     }
-                }else{
+                } else {
                     Log::notice('delaying next requery for 3 seconds');
-                    sleep(3);
                     Log::notice('Now retrying requery...');
                     $this->requeryTransaction($this->txref);
                 }
@@ -550,26 +536,25 @@ class Rave {
         }
         return $this;
     }
-    
-    
+
     /**
      * Generates the final json to be used in configuring the payment call to the rave payment gateway
      * @return string
      * */
-    function initialize($redirectURL){
+    public function initialize(string $redirectURL){
         $this->setData($redirectURL);
 
-        if (!empty(request()->metadata)) {
-           $this->meta = json_decode(request()->metadata, true);
+        if (!empty($this->request->metadata)) {
+           $this->meta = json_decode($this->request->metadata, true);
         }
 
         $this->createCheckSum();
         $this->transactionData = array_merge($this->transactionData, array('integrity_hash' => $this->integrityHash), array('meta' => $this->meta));
-        
+
         if(isset($this->handler)){
             $this->handler->onInit($this->transactionData);
         }
-        
+
         $json = json_encode($this->transactionData);
         echo '<html>';
         echo '<body>';
@@ -586,26 +571,67 @@ class Rave {
 
         return $json;
     }
-    
+
     /**
      * Handle canceled payments with this method
      * @param string $referenceNumber This should be the reference number of the transaction that was canceled
-     * @return object
+     * @return mixed
      * */
-    function paymentCanceled($referenceNumber){
+    public function paymentCanceled($referenceNumber) {
         $this->txref = $referenceNumber;
         Log::notice('Payment was canceled by user..'.$this->txref);
         if(isset($this->handler)){
             $this->handler->onCancel($this->txref);
-        }else{
+        } else {
             $collection = collect(['status' => "canceled",
                                 'txref' => $this->txref ]);
             return $collection->toJson();
         }
         return $this;
     }
-    
+
+    /**
+     * Requery action function .
+     *
+     * @param  stdClass $data
+     * @param  string   $handler Handler to call.
+     * @param  string   $log     Log message.
+     * @param  string   $logType Log type.
+     * @return stdClass | \KingFlamez\Rave\Rave
+     */
+    protected function requeryAction (stdClass $data, string $handler, string $log, $logType = "notice") {
+
+        Log::{$logType}($log.json_encode($data));
+
+        if(isset($this->handler)) {
+            $this->handler->{"on".ucfirst($handler)}($data);
+        }else{
+            return $data;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Feedback for requery.
+     *
+     * @param  stdClass $response
+     * @return stdClass | \KingFlamez\Rave\Rave
+     */
+    protected function feedbackFromSource (stdClass $data, string $status) {
+        $feedback = [
+            "successful" => ["successful", "Requeryed a successful transaction..."],
+            "failed" => ["failure", "Requeryed a failed transaction..."],
+            "error" => ["requeryError", "Requery call returned error for transaction reference..."],
+            "timeout" => ["timeout", "Requeryed an undecisive transaction..."],
+        ];
+
+        return $this->requeryAction(
+            $data,
+            $feedback[$status][0],
+            $feedback[$status][1]
+        );
+    }
 }
 
 // silencio es dorado
-?>
