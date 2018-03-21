@@ -23,7 +23,7 @@ class RaveServiceProviderTests extends TestCase
      */
     public function hasAliased()
     {
-        $this->assertTrue($this->app->isAlias(Rave::class));
-        $this->assertEquals('laravelrave', $this->app->getAlias(Rave::class));
+        $this->assertTrue($this->app->isAlias("KingFlamez\Rave\Rave"));
+        $this->assertEquals('laravelrave', $this->app->getAlias("KingFlamez\Rave\Rave"));
     }
 }

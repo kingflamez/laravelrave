@@ -48,7 +48,7 @@ abstract class TestCase extends BaseTestCase {
      */
     protected function getPackageProviders($app)
     {
-        return [ \KingFlamez\Rave\RaveServiceProvider::class ];
+        return [ "\KingFlamez\Rave\RaveServiceProvider" ];
     }
 
     /**
@@ -60,7 +60,7 @@ abstract class TestCase extends BaseTestCase {
     protected function getPackageAliases($app)
     {
         return [
-            "Rave" => \KingFlamez\Rave\Facades\Rave::class
+            "Rave" => "\KingFlamez\Rave\Facades\Rave"
         ];
     }
 
