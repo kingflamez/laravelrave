@@ -59,8 +59,6 @@ class Rave {
         $this->unirestRequest= $unirestRequest;
         $prefix = Config::get('rave.prefix');
         $overrideRefWithPrefix = false;
-        // create a log channel
-        Log::useDailyFiles(storage_path().'/logs/Flutterwave rave/rave.log');
 
         $this->publicKey = Config::get('rave.publicKey');
         $this->secretKey = Config::get('rave.secretKey');

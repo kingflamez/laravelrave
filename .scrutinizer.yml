@@ -1,0 +1,17 @@
+checks:
+    php: true
+filter:
+    paths: ["src/*"]
+    excluded_paths:
+        - tests/*
+        - resources/*
+        - vendors/*
+
+build:
+    tests:
+        override:
+            -
+                command: 'vendor/bin/phpunit --coverage-clover=clover.yml'
+                coverage:
+                    file: 'clover.yml'
+                    format: 'clover'
