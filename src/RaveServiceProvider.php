@@ -38,7 +38,7 @@ class RaveServiceProvider extends ServiceProvider
 
         });
 
-        $this->app->alias('laravelrave', Rave::class);
+        $this->app->alias('laravelrave', "KingFlamez\Rave\Rave");
     }
 
     /**
