@@ -2,18 +2,21 @@
 
 namespace KingFlamez\Rave;
 
+use Unirest\Request;
+use Unirest\Request\Body;
 use Illuminate\Support\ServiceProvider;
 
 class RaveServiceProvider extends ServiceProvider
 {
     protected $defer = false;
+
     /**
      * Perform post-registration booting of services.
      *
      * @return void
      */
     public function boot()
-    {  
+    {
         $config = realpath(__DIR__.'/../resources/config/rave.php');
 
         $this->publishes([
@@ -29,15 +32,18 @@ class RaveServiceProvider extends ServiceProvider
     public function register()
     {
 
-        $this->app->singleton('laravelrave', function () {
+        $this->app->singleton('laravelrave', function ($app) {
 
-            return new Rave();
+            return new Rave($app->make("request"), new Request, new Body);
 
         });
+
+        $this->app->alias('laravelrave', Rave::class);
     }
 
     /**
     * Get the services provided by the provider
+    *
     * @return array
     */
     public function provides()
