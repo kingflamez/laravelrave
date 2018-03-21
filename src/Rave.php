@@ -159,7 +159,7 @@ class Rave {
      * @param string $env This can either be 'staging' or 'live'
      * @return object
      * */
-    public function setEnvironment(string $env)
+    public function setEnvironment($env)
     {
         $this->env = $env;
         return $this;
@@ -171,7 +171,7 @@ class Rave {
      * @param boolean $overrideRefWithPrefix Set this parameter to true to use your prefix as the transaction reference
      * @return object
      * */
-    public function setPrefix(string $prefix, $overrideRefWithPrefix = false)
+    public function setPrefix($prefix, $overrideRefWithPrefix = false)
     {
         $this->transactionPrefix = $overrideRefWithPrefix ? $prefix : $prefix.'_';
         $this->overrideTransactionReference = $overrideRefWithPrefix;
@@ -203,7 +203,7 @@ class Rave {
      * @param string $paymentMethod The allowed payment methods. Can be card, account or both
      * @return object
      * */
-    public function setPaymentMethod(string $paymentMethod){
+    public function setPaymentMethod($paymentMethod){
         $this->paymentMethod = $paymentMethod;
         return $this;
     }
@@ -221,7 +221,7 @@ class Rave {
      * @param string $customDescription The description of the transaction
      * @return object
      * */
-    public function setDescription (string $customDescription) {
+    public function setDescription ($customDescription) {
         $this->customDescription = $customDescription;
         return $this;
     }
@@ -239,7 +239,7 @@ class Rave {
      * @param string $customLogo Your Logo
      * @return object
      * */
-    public function setLogo(string $customLogo){
+    public function setLogo($customLogo){
         $this->customLogo = $customLogo;
         return $this;
     }
@@ -257,7 +257,7 @@ class Rave {
      * @param string $customTitle A title for the payment. It can be the product name, your business name or anything short and descriptive
      * @return object
      * */
-    public function setTitle(string $customTitle){
+    public function setTitle($customTitle){
         $this->customTitle = $customTitle;
         return $this;
     }
@@ -275,7 +275,7 @@ class Rave {
      * @param string $country The transaction country. Can be NG, US, KE, GH and ZA
      * @return object
      * */
-    public function setCountry(string $country){
+    public function setCountry($country){
         $this->country = $country;
         return $this;
     }
@@ -293,7 +293,7 @@ class Rave {
      * @param string $currency The transaction currency. Can be NGN, GHS, KES, ZAR, USD, EUR and GBP
      * @return object
      * */
-    public function setCurrency(string $currency){
+    public function setCurrency($currency){
         $this->currency = $currency;
         return $this;
     }
@@ -311,7 +311,7 @@ class Rave {
      * @param string $customerEmail This is the paying customer's email
      * @return object
      * */
-    public function setEmail(string $customerEmail){
+    public function setEmail($customerEmail){
         $this->customerEmail = $customerEmail;
         return $this;
     }
@@ -329,7 +329,7 @@ class Rave {
      * @param string $customerFirstname This is the paying customer's firstname
      * @return object
      * */
-    public function setFirstname(string $customerFirstname){
+    public function setFirstname($customerFirstname){
         $this->customerFirstname = $customerFirstname;
         return $this;
     }
@@ -347,7 +347,7 @@ class Rave {
      * @param string $customerLastname This is the paying customer's lastname
      * @return object
      * */
-    public function setLastname(string $customerLastname){
+    public function setLastname($customerLastname){
         $this->customerLastname = $customerLastname;
         return $this;
     }
@@ -365,7 +365,7 @@ class Rave {
      * @param string $customerPhone This is the paying customer's phonenumber
      * @return object
      * */
-    public function setPhoneNumber(string $customerPhone){
+    public function setPhoneNumber($customerPhone){
         $this->customerPhone = $customerPhone;
         return $this;
     }
@@ -541,7 +541,7 @@ class Rave {
      * Generates the final json to be used in configuring the payment call to the rave payment gateway
      * @return string
      * */
-    public function initialize(string $redirectURL){
+    public function initialize($redirectURL){
         $this->setData($redirectURL);
 
         if (!empty($this->request->metadata)) {
@@ -599,7 +599,7 @@ class Rave {
      * @param  string   $logType Log type.
      * @return stdClass | \KingFlamez\Rave\Rave
      */
-    protected function requeryAction (stdClass $data, string $handler, string $log, $logType = "notice") {
+    protected function requeryAction (stdClass $data, $handler, $log, $logType = "notice") {
 
         Log::{$logType}($log.json_encode($data));
 
@@ -618,7 +618,7 @@ class Rave {
      * @param  stdClass $response
      * @return stdClass | \KingFlamez\Rave\Rave
      */
-    protected function feedbackFromSource (stdClass $data, string $status) {
+    protected function feedbackFromSource (stdClass $data, $status) {
         $feedback = [
             "successful" => ["successful", "Requeryed a successful transaction..."],
             "failed" => ["failure", "Requeryed a failed transaction..."],
