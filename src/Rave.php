@@ -424,7 +424,7 @@ class Rave {
 
     /**
      * gets the transaction meta data
-     * @return string
+     * @return array
      * */
     public function getMetaData(){
         return $this->meta;
