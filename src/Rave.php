@@ -39,7 +39,7 @@ class Rave {
     protected $handler;
     protected $urls = [
         "live" => "https://api.ravepay.co",
-        "others" => "https://rave-api-v2.herokuapp.com",
+        "others" => "https://ravesandboxapi.flutterwave.com",
     ];
     protected $baseUrl;
     protected $transactionData;
