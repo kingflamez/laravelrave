@@ -14,7 +14,6 @@
 - Go to [Flutterwave Rave Test](https://ravesandbox.flutterwave.com) to get your **`TEST`** public and private key
 
 
-
 ## Installation
 
 [PHP](https://php.net) 5.4+ or [HHVM](http://hhvm.com) 3.3+, [Laravel](https://laravel.com) and [Composer](https://getcomposer.org) are required.
