@@ -190,14 +190,14 @@ class RaveController extends Controller
 
 ```
 
-### Payment
-<p align="center">
- <img src="https://raw.githubusercontent.com/kingflamez/laravelrave/master/resources/img/pay.jpg" alt="Pay page"/>
-</p>
-
-<p align="center">
+<!-- ### Payment -->
+<!-- <p align="center">
  <img src="https://raw.githubusercontent.com/kingflamez/laravelrave/master/resources/img/rave.jpg" alt="Pay page"/>
-</p>
+</p> -->
+
+## Documentation
+1. [Recurring Payment ](readmes/recurringPayment.md)
+
 
 >Test Card
 
@@ -226,9 +226,6 @@ otp: 12345
 
 For [More Test Cards](https://flutterwavedevelopers.readme.io/docs/test-cards)
 For [More Test Bank Accounts](https://flutterwavedevelopers.readme.io/docs/test-bank-accounts)
-
-## Documentation
-1. [Recurring Payment ](readmes/recurringPayment.md)
 
 ## ToDo
 
