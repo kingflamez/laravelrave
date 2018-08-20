@@ -16,7 +16,7 @@
 
 ## Documentation
 
-A friendly documentation can be found [here](https://kingflamez.github.io/laravelrave)
+A friendly documentation can be found [here](https://laravelrave.netlify.com/)
 
 
 ## ToDo
