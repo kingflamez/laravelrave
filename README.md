@@ -16,7 +16,10 @@
 
 ## Documentation
 
-A friendly documentation can be found [here](https://laravelrave.netlify.com/)
+> ### A friendly documentation can be found [here](https://laravelrave.netlify.com/)
+
+
+> ### A sample implementation can be found [here](https://github.com/kingflamez/laravelrave-implementation/)
 
 
 ## ToDo
