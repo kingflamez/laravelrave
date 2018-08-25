@@ -22,6 +22,7 @@ class Rave {
     protected $paymentMethod = 'both';
     protected $customLogo;
     protected $customTitle;
+    protected $secretHash;
     protected $txref;
     protected $integrityHash;
     protected $env = 'staging';
@@ -54,6 +55,7 @@ class Rave {
         $this->env = Config::get('rave.env');
         $this->customLogo = Config::get('rave.logo');
         $this->customTitle = Config::get('rave.title');
+        $this->secretHash = Config::get('rave.secretHash');
         $this->transactionPrefix = $prefix.'_';
         $this->overrideTransactionReference = $overrideRefWithPrefix;
 
@@ -236,6 +238,84 @@ class Rave {
         }
 
         return $response->body;
+    }
+
+
+    /**
+     * Exchange Rates
+     * @return object
+     * */
+    public function exchangeRates()
+    {
+        $data = array(
+            'origin_currency' => $this->request->origin_currency,
+            'destination_currency' => $this->request->destination_currency,
+            'seckey' => $this->secretKey
+        );
+        
+        if (!empty($this->request->amount)) {
+            $data = array(
+                'origin_currency' => $this->request->origin_currency,
+                'destination_currency' => $this->request->destination_currency,
+                'amount' => $this->request->amount,
+                'seckey' => $this->secretKey
+            );
+        }
+        
+        // make request to endpoint using unirest.
+        $headers = array('Content-Type' => 'application/json');
+        $body = $this->body->json($data);
+        $url = $this->baseUrl . '/gpx/merchant/transactions/refund';
+
+        // Make `POST` request and handle response with unirest
+        $response = $this->unirestRequest->post($url, $headers, $body);
+
+        //check the status is success
+        if ($response->body && $response->body->status === "success") {
+            return $response->body;
+        }
+
+        return $response->body;
+    }
+
+
+    /**
+     * Receive Webhook
+     * @param $secrethash 
+     * @return object
+     * */
+    public function receiveWebhook()
+    {
+        // Retrieve the request's body
+        $body = @file_get_contents("php://input");
+
+        // retrieve the signature sent in the reques header's.
+        $signature = (isset($_SERVER['verif-hash']) ? $_SERVER['verif-hash'] : '');
+
+        /* It is a good idea to log all events received. Add code *
+        * here to log the signature and body to db or file       */
+
+        if (!$signature) {
+            // only a post with rave signature header gets our attention
+            exit();
+        }
+
+        // Store the same signature on your server as an env variable and check against what was sent in the headers
+        $local_signature = $this->secretHash;
+
+        // confirm the event's signature
+        if( $signature !== $local_signature ){
+        // silently forget this ever happened
+        exit();
+        }
+
+        http_response_code(200); // PHP 5.4 or greater
+        // parse event (which is json string) as object
+        // Give value to your customer but don't give any output
+        // Remember that this is a call from rave's servers and 
+        // Your customer is not seeing the response here at all
+        $response = json_decode($body);
+        return $response;
     }
 
 
@@ -574,5 +654,3 @@ class Rave {
      ********************************************************************/
 
 }
-
-// silencio es dorado
