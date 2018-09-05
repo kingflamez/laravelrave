@@ -184,7 +184,6 @@ class Rave {
         if (request()->cancelled) {
             $cancelledResponse = '{"status": "cancelled" , "message": "Customer cancelled the transaction", "data":{ "status": "cancelled", "txRef" :"' . $this->txref . '"}}';
             $resp = json_decode($cancelledResponse);
-            dd($resp);
             return $resp;
         } else {
             return $data;
