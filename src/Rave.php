@@ -652,4 +652,107 @@ class Rave {
      ********************************************************************
      ********************************************************************/
 
+
+
+    /********************************************************************
+     ********************************************************************
+     * Sub acccount Begin
+     ********************************************************************
+     ********************************************************************/
+      /**
+
+     * Create Sub Account
+     * @return object
+     * */
+
+     public function createSubAccount()
+      {
+        $data = array(
+            'account_bank' => $this->request->account_bank,
+            'account_number' => $this->request->account_number,
+            'business_name' => $this->request->business_name,
+            'business_email' => $this->request->business_email,
+            'business_contact' => $this->request->business_contact,
+            'business_contact_mobile' => $this->request->business_contact_mobile,
+            'business_mobile' => $this->request->business_mobile,
+            'meta' => $this->meta,
+            'seckey' => $this->seckey,
+            'split_type' => $this->request->slit_type,
+            'split_value' => $this->request->split_value
+        );
+
+         // make request to endpoint using unirest.
+         $headers = array('Content-Type' => 'application/json');
+         $body = $this->body->json($data);
+         $url = $this->baseUrl . '/v2/gpx/subaccounts/create';
+         // Make `POST` request and handle response with unirest
+        $response = $this->unirestRequest->post($url, $headers, $body);
+
+        //check the status is success
+        if ($response->body && $response->body->status === "success") {
+            return $response->body;
+        }
+
+        return $response->body;
+
+     }
+
+     /* List all the sub accounts
+     * @return object
+     * */
+    public function listSubAccount()
+    {
+        $url = $this->baseUrl . '/v2/gpx/subaccounts/?seckey='. $this->secretKey;
+        $headers = array('Content-Type' => 'application/json');
+
+        // Make `GET` request and handle response with unirest
+        $response = $this->unirestRequest->get($url, $headers);
+
+        //check the status is success
+        if ($response->body) {
+            return $response->body;
+        }
+
+        return $response;
+    }
+        /**
+     * Fetches a sub account
+     * @return object
+     * */
+    public function fetchSubAccount()
+    {
+        $id = $this->request->id;
+        $url = $this->baseUrl . '/v2/gpx/subaccounts/get/'.$id.'?seckey=' . $this->secretKey;
+        $headers = array('Content-Type' => 'application/json');
+
+        // Make `GET` request and handle response with unirest
+        $response = $this->unirestRequest->get($url, $headers);
+
+        //check the status is success
+        if ($response->body) {
+            return $response->body;
+        }
+
+        return $response;
+    }
+
+
+     /********************************************************************
+     ********************************************************************
+     * Sub acccount Ends
+     ********************************************************************
+     ********************************************************************/
+
+
+      /********************************************************************
+     ********************************************************************
+     * Transfer Begin
+     ********************************************************************
+     ********************************************************************/
+      /**
+
+     * Initialize a transfer
+     * @return object
+     * */
+
 }
