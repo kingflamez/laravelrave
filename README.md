@@ -28,7 +28,6 @@
  - Support Tokenized payment
  - Miscellaneous
  - Pre Auth
- - Transfers
 
 
 ## Credits
