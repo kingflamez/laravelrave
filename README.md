@@ -26,10 +26,6 @@
 
  - Support Direct Charges
  - Support Tokenized payment
- - Miscellaneous
- - Pre Auth
- - Sub Accounts
- - Transfers
 
 
 ## Credits
@@ -38,6 +34,7 @@
 - [Emmanuel Okeke](https://github.com/emmanix2002)
 - [Adebayo Mustafa](https://github.com/AdebsAlert)
 - [Tunde Aromire](https://github.com/toondaey)
+- [Ifunanya Ikemma](https://github.com/Iphytech)
 
 ## Contributing
 Please feel free to fork this package and contribute by submitting a pull request to enhance the functionalities. I will appreciate that a lot. Also please add your name to the credits.
