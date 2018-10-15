@@ -26,8 +26,6 @@
 
  - Support Direct Charges
  - Support Tokenized payment
- - Miscellaneous
- - Pre Auth
 
 
 ## Credits
