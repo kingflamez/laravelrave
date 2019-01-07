@@ -675,7 +675,7 @@ class Rave {
             'business_contact' => $this->request->business_contact,
             'business_contact_mobile' => $this->request->business_contact_mobile,
             'business_mobile' => $this->request->business_mobile,
-            'meta' => $this->meta,
+            'meta' => $this->request->meta,
             'seckey' => $this->seckey,
             'split_type' => $this->request->slit_type,
             'split_value' => $this->request->split_value
@@ -719,7 +719,7 @@ class Rave {
      * Fetches a sub account
      * @return object
      * */
-    public function fetchSubAccount()
+    public function fetchSubAccount($id)
     {
         $id = $this->request->id;
         $url = $this->baseUrl . '/v2/gpx/subaccounts/get/'.$id.'?seckey=' . $this->secretKey;
@@ -1006,9 +1006,9 @@ class Rave {
     /* List of Direct bank Charge
      * @return object
      * */
-     public function listofDirectBankCharge($country) 
+     public function listofDirectBankCharge() 
      {
-        $url = $this->baseUrl . '/flwv3-pug/getpaidx/api/flwpbf-banks.js?json=1'. '&country='. $country;
+        $url = $this->baseUrl . '/flwv3-pug/getpaidx/api/flwpbf-banks.js?json=1';
         $headers = array('Content-Type' => 'application/json');
 
         //Make `GET` request and handle response with unirest
