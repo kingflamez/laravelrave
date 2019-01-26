@@ -659,15 +659,23 @@ class Rave {
      * Sub acccount Begin
      ********************************************************************
      ********************************************************************/
-      /**
 
-     * Create Sub Account
-     * @return object
-     * */
+    /**
+     * Registers a new sub account on Rave.
+     *
+     * @return mixed|object
+     *
+     * @throws \Unirest\Exception
+     */
+    public function createSubAccount()
+    {
+        $meta = [];
 
-     public function createSubAccount()
-      {
-        $data = array(
+        if (!empty($this->request->metadata)) {
+            $meta = json_decode($this->request->metadata, true);
+        }
+
+        $data = [
             'account_bank' => $this->request->account_bank,
             'account_number' => $this->request->account_number,
             'business_name' => $this->request->business_name,
@@ -675,27 +683,22 @@ class Rave {
             'business_contact' => $this->request->business_contact,
             'business_contact_mobile' => $this->request->business_contact_mobile,
             'business_mobile' => $this->request->business_mobile,
-            'meta' => $this->request->meta,
-            'seckey' => $this->seckey,
-            'split_type' => $this->request->slit_type,
+            'meta' => $meta,
+            'seckey' => $this->secretKey,
+            'split_type' => $this->request->split_type,
             'split_value' => $this->request->split_value
-        );
+        ];
 
-         // make request to endpoint using unirest.
-         $headers = array('Content-Type' => 'application/json');
-         $body = $this->body->json($data);
-         $url = $this->baseUrl . '/v2/gpx/subaccounts/create';
-         // Make `POST` request and handle response with unirest
+        // Make request to endpoint using unirest.
+        $headers = ['Content-Type' => 'application/json'];
+        $body = $this->body->json($data);
+        $url = $this->baseUrl . '/v2/gpx/subaccounts/create';
+
+        // Make `POST` request and handle response with unirest.
         $response = $this->unirestRequest->post($url, $headers, $body);
 
-        //check the status is success
-        if ($response->body && $response->body->status === "success") {
-            return $response->body;
-        }
-
         return $response->body;
-
-     }
+    }
 
      /* List all the sub accounts
      * @return object
