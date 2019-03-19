@@ -116,13 +116,13 @@ class Rave {
             "custom_logo" => $this->customLogo,
             "custom_title" => $this->customTitle,
             "customer_phone" => $this->request->phonenumber,
-            "redirect_url" => $redirectURL,
-            "hosted_payment" => 1
+            "redirect_url" => $redirectURL
         );
 
         if (!empty($this->request->paymentplan)) {
             $options["payment_plan"] = $this->request->paymentplan;
         }
+        
 
         ksort($options);
 
@@ -152,11 +152,21 @@ class Rave {
         if (!empty($this->request->metadata)) {
             $meta = json_decode($this->request->metadata, true);
         }
-
+      
+        $subAccounts = array();
+        if (!empty($this->request->subaccounts)) {
+            $subAccounts = json_decode($this->request->subaccounts, true);
+        }
+      
         $this->createCheckSum($redirectURL);
         $this->transactionData = array_merge($this->transactionData, array('data-integrity_hash' => $this->integrityHash), array('meta' => $meta));
-
+      
+        if (!empty($subAccounts)) {
+          $this->transactionData = array_merge($this->transactionData, array('subaccounts' => $subAccounts));
+        }
+      
         $json = json_encode($this->transactionData);
+
         echo '<html>';
         echo '<body>';
         echo '<center>Proccessing...<br /><img style="height: 50px;" src="https://media.giphy.com/media/swhRkVYLJDrCE/giphy.gif" /></center>';
@@ -172,6 +182,7 @@ class Rave {
 
         return $json;
     }
+
 
     /**
      * Handle canceled payments with this method
