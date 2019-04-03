@@ -902,7 +902,7 @@ class Rave {
         $headers = array('Content-Type' => 'application/json');
 
         // Make `POST` request and handle response with unirest
-        $response = $this->unirestRequest->post($body , $url, $headers);
+        $response = $this->unirestRequest->post($url, $headers, $body);
 
         //check the status is success
         if ($response->body) {
