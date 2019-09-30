@@ -122,7 +122,7 @@ class Rave {
         if (!empty($this->request->paymentplan)) {
             $options["payment_plan"] = $this->request->paymentplan;
         }
-        
+
 
         ksort($options);
 
@@ -152,19 +152,19 @@ class Rave {
         if (!empty($this->request->metadata)) {
             $meta = json_decode($this->request->metadata, true);
         }
-      
+
         $subAccounts = array();
         if (!empty($this->request->subaccounts)) {
             $subAccounts = json_decode($this->request->subaccounts, true);
         }
-      
+
         $this->createCheckSum($redirectURL);
         $this->transactionData = array_merge($this->transactionData, array('data-integrity_hash' => $this->integrityHash), array('meta' => $meta));
-      
+
         if (!empty($subAccounts)) {
           $this->transactionData = array_merge($this->transactionData, array('subaccounts' => $subAccounts));
         }
-      
+
         $json = json_encode($this->transactionData);
 
         echo '<html>';
@@ -225,7 +225,7 @@ class Rave {
             'ref' => $this->request->ref,
             'seckey' => $this->secretKey
         );
-        
+
         if (!empty($this->request->amount)) {
             $data = array(
                 'amount' => $this->request->amount,
@@ -233,7 +233,7 @@ class Rave {
                 'seckey' => $this->secretKey
             );
         }
-        
+
         // make request to endpoint using unirest.
         $headers = array('Content-Type' => 'application/json');
         $body = $this->body->json($data);
@@ -262,7 +262,7 @@ class Rave {
             'destination_currency' => $this->request->destination_currency,
             'seckey' => $this->secretKey
         );
-        
+
         if (!empty($this->request->amount)) {
             $data = array(
                 'origin_currency' => $this->request->origin_currency,
@@ -271,7 +271,7 @@ class Rave {
                 'seckey' => $this->secretKey
             );
         }
-        
+
         // make request to endpoint using unirest.
         $headers = array('Content-Type' => 'application/json');
         $body = $this->body->json($data);
@@ -291,7 +291,7 @@ class Rave {
 
     /**
      * Receive Webhook
-     * @param $secrethash 
+     * @param $secrethash
      * @return object
      * */
     public function receiveWebhook()
@@ -322,7 +322,7 @@ class Rave {
         http_response_code(200); // PHP 5.4 or greater
         // parse event (which is json string) as object
         // Give value to your customer but don't give any output
-        // Remember that this is a call from rave's servers and 
+        // Remember that this is a call from rave's servers and
         // Your customer is not seeing the response here at all
         $response = json_decode($body);
         return $response;
@@ -382,7 +382,7 @@ class Rave {
             'last_attempt' => '1'
             // 'only_successful' => '1'
         );
-        
+
         // make request to endpoint using unirest.
         $headers = array('Content-Type' => 'application/json');
         $body = $this->body->json($data);
@@ -409,7 +409,7 @@ class Rave {
      * Charges End
      ********************************************************************
      ********************************************************************/
-    
+
 
     /********************************************************************
      ********************************************************************
@@ -431,7 +431,7 @@ class Rave {
             'duration' => $this->request->duration,
             'seckey' => $this->secretKey
         );
-        
+
         // make request to endpoint using unirest.
         $headers = array('Content-Type' => 'application/json');
         $body = $this->body->json($data);
@@ -461,7 +461,7 @@ class Rave {
             'status' => $this->request->status,
             'seckey' => $this->secretKey
         );
-        
+
         // make request to endpoint using unirest.
         $headers = array('Content-Type' => 'application/json');
         $body = $this->body->json($data);
@@ -489,7 +489,7 @@ class Rave {
         $data = array(
             'seckey' => $this->secretKey
         );
-        
+
         // make request to endpoint using unirest.
         $headers = array('Content-Type' => 'application/json');
         $body = $this->body->json($data);
@@ -612,7 +612,7 @@ class Rave {
         $data = array(
             'seckey' => $this->secretKey
         );
-        
+
         // make request to endpoint using unirest.
         $headers = array('Content-Type' => 'application/json');
         $body = $this->body->json($data);
@@ -640,7 +640,7 @@ class Rave {
         $data = array(
             'seckey' => $this->secretKey
         );
-        
+
         // make request to endpoint using unirest.
         $headers = array('Content-Type' => 'application/json');
         $body = $this->body->json($data);
@@ -769,7 +769,7 @@ class Rave {
      * @return object
      * */
 
-     public function initiateTransfer($arrdata) 
+     public function initiateTransfer($arrdata)
      {
        // make request to endpoint using unirest.
          $headers = array('Content-Type' => 'application/json');
@@ -789,7 +789,7 @@ class Rave {
      * Initialiate a bulk transfer
      * @return object
      * */
-    public function bulkTransfer($arrdata) 
+    public function bulkTransfer($arrdata)
     {
             // make request to endpoint using unirest.
             $headers = array('Content-Type' => 'application/json');
@@ -810,7 +810,7 @@ class Rave {
      * Fetches a transfer
      * @return object
      * */
-    public function fetchTransfer($id= '', $q= '', $reference= '') 
+    public function fetchTransfer($id= '', $q= '', $reference= '')
     {
         $url = $this->baseUrl . '/v2/gpx/transfers?seckey=' . $this->secretKey . '&q='.$q.'&id='.$id. '&reference='.$reference;
         $headers = array('Content-Type' => 'application/json');
@@ -881,7 +881,7 @@ class Rave {
     /* Get the Transfer Balance
      * @return object
      * */
-    public function getTransferBalance($currency) 
+    public function getTransferBalance($currency)
     {
         $url = $this->baseUrl . '/v2/gpx/balance?seckey='. $this->seckey. '&currency='. $currency;
         $headers = array('Content-Type' => 'application/json');
@@ -891,11 +891,11 @@ class Rave {
 
         return $response;
     }
-    
+
     /* Account Verification
      * @return object
      * */
-    public function accountVerification($arrdata) 
+    public function accountVerification($arrdata)
     {
         $body = $this->body->json($arrdata);
         $url = $this->baseUrl . '/flwv3-pug/getpaidx/api/resolve_account';
@@ -935,7 +935,7 @@ class Rave {
         $headers = array('Content-Type' => 'application/json');
 
         // Make `GET` request and handle response with unirest
-        $response = $this->unirestRequest->get($body , $url, $headers);
+        $response = $this->unirestRequest->get($url, $headers, $body);
 
         //check the status is success
         if ($response->body) {
@@ -947,14 +947,14 @@ class Rave {
     /* Capture card
      * @return object
      * */
-    public function capture($arrdata) 
+    public function capture($arrdata)
     {
         $body = $this->body->json($arrdata);
         $url = $this->baseUrl . '/flwv3-pug/getpaidx/api/capture';
         $headers = array('Content-Type' => 'application/json');
 
         // Make `GET` request and handle response with unirest
-        $response = $this->unirestRequest->post($body , $url, $headers);
+        $response = $this->unirestRequest->post($url, $headers, $body);
 
         //check the status is success
         if ($response->body) {
@@ -966,15 +966,15 @@ class Rave {
     /* Refund
      * @return object
      * */
-    
-     public function refundPreAuthCard($arrdata) 
+
+     public function refundPreAuthCard($arrdata)
      {
          $body = $this->body->json($arrdata);
         $url = $this->baseUrl . '/flwv3-pug/getpaidx/api/refundorvoid';
         $headers = array('Content-Type' => 'application/json');
 
         // Make `GET` request and handle response with unirest
-        $response = $this->unirestRequest->post($body , $url, $headers);
+        $response = $this->unirestRequest->post($url, $headers, $body);
 
         //check the status is success
         if ($response->body) {
@@ -989,7 +989,7 @@ class Rave {
      ********************************************************************
      ********************************************************************/
 
-    
+
     /********************************************************************
      ********************************************************************
      * Miscellaneous Start
@@ -1000,27 +1000,27 @@ class Rave {
      * @return object
      * */
 
-     public function getFees($arrdata) 
+     public function getFees($arrdata)
      {
          $body = $this->body->json($arrdata);
          $url = $this->baseUrl . '/flwv3-pug/getpaidx/api/fee';
          $headers = array('Content-Type' => 'application/json');
- 
+
          // Make `GET` request and handle response with unirest
-         $response = $this->unirestRequest->get($body, $url, $headers);
- 
+         $response = $this->unirestRequest->get($url, $headers, $body);
+
          //check the status is success
          if ($response->body) {
              return $response->body;
          }
- 
+
          return $response;
      }
 
     /* List of Direct bank Charge
      * @return object
      * */
-     public function listofDirectBankCharge() 
+     public function listofDirectBankCharge()
      {
         $url = $this->baseUrl . '/flwv3-pug/getpaidx/api/flwpbf-banks.js?json=1';
         $headers = array('Content-Type' => 'application/json');
@@ -1040,7 +1040,7 @@ class Rave {
         $body = $this->body->json($arrdata);
 
         // Make `POST` request and handle response with unirest
-        $response = $this->unirestRequest->post($body, $url, $headers);
+        $response = $this->unirestRequest->post($url, $headers, $body);
 
         // check the status is success
         if ($response->body && $response->body->status === "success") {
@@ -1059,7 +1059,7 @@ class Rave {
         $body = $this->body->json($arrdata);
 
         // Make `POST` request and handle response with unirest
-        $response = $this->unirestRequest->post($body, $url, $headers);
+        $response = $this->unirestRequest->post($url, $headers, $body);
 
         // check the status is success
         if ($response->body && $response->body->status === "success") {
@@ -1072,7 +1072,7 @@ class Rave {
      * @return object
      * */
 
-     public function listofBankForTransfer($country) 
+     public function listofBankForTransfer($country)
      {
         $url = $this->baseUrl . '/banks?'. '&$country='. $country;
         $headers = array('Content-Type' => 'application/json');
