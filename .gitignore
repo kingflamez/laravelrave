@@ -5,3 +5,4 @@ composer.lock
 .idea
 src/Rave3.php
 clover.xml
+.phpunit.result.cache
