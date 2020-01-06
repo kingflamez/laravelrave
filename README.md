@@ -3,15 +3,11 @@
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
 [![Total Downloads][ico-downloads]][link-downloads]
-[![Build Status][ico-travis]][link-travis]
-[![Scrutinizer Code Quality][ico-code-quality]][link-code-quality]
-[![Code Coverage][ico-coverage]][link-coverage]
-[![Code Intelligence Status][ico-code-intelligence]][link-code-intelligence]
+
 
 > Implement Flutterwave Rave payment gateway easily with Laravel
 
-- Go to [Flutterwave Rave Live](https://rave.flutterwave.com/) to get your **`LIVE`** public and private key
-- Go to [Flutterwave Rave Sandbox](https://ravesandbox.flutterwave.com/) to get your **`TEST`** public and private key
+- Go to [Flutterwave Rave Live](https://rave.flutterwave.com/) to get your public and private key
 
 
 ## Documentation
