@@ -4,6 +4,7 @@ namespace Tests;
 
 use Mockery;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use phpDocumentor\Reflection\Types\Void_;
 
 abstract class TestCase extends BaseTestCase {
 
@@ -15,7 +16,7 @@ abstract class TestCase extends BaseTestCase {
 
     protected $formData;
 
-    function setUp () {
+    function setUp () : void {
 
         $this->m = new Mockery;
 
@@ -33,7 +34,7 @@ abstract class TestCase extends BaseTestCase {
      *
      * @return void
      */
-    function tearDown() {
+    function tearDown() : void {
 
         $this->m->close();
 

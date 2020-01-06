@@ -2,13 +2,11 @@
 
 namespace Tests\Unit;
 
-use App;
 use Carbon\Carbon;
 use Tests\TestCase;
 use ReflectionClass;
 use ReflectionProperty;
 use KingFlamez\Rave\Rave;
-use Illuminate\Http\Request;
 use Tests\Stubs\PaymentEventHandler;
 use Tests\Concerns\ExtractProperties;
 
@@ -37,8 +35,9 @@ class UnitTests extends TestCase {
      * @test
      *
      * @depends initiateRaveFromApp
-     * @param  \KingFlamez\Rave\Rave   $rave
+     * @param \KingFlamez\Rave\Rave $rave
      * @return void
+     * @throws \ReflectionException
      */
     function initializeWithDefaultValues(Rave $rave) {
 
@@ -86,6 +85,7 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
      */
     function generatesTransactionReference (Rave $rave) {
@@ -102,12 +102,13 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
      */
     function settingUpEnvironment(Rave $rave) {
 
         $newEnv = "live";
-        $rave->setEnvironment($newEnv);
+        $this->setProperty($rave, 'env', $newEnv);
         $env = $this->extractProperty($rave, "env");
 
         $this->assertEquals($newEnv, $env["value"]);
@@ -118,16 +119,18 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
      */
     function alterPrefix(Rave $rave) {
 
         $newPrefix = "org";
-        $txRef = $rave->setPrefix($newPrefix, true)->getReferenceNumber();
+        $txRef = $rave->setPrefix($newPrefix, true)->createReferenceNumber()->getReferenceNumber();
         $transactionPrefix = $this->extractProperty($rave, "transactionPrefix");
         $overrideTransactionReference = $this->extractProperty($rave, "overrideTransactionReference");
 
-        $this->assertEquals("org", $txRef);
+        $this->assertStringStartsWith("org", $txRef);
+
         $this->assertTrue($overrideTransactionReference["value"]);
         $this->assertEquals("org", $transactionPrefix["value"]);
     }
@@ -137,6 +140,7 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
      */
     function settingAmount(Rave $rave) {
@@ -149,9 +153,9 @@ class UnitTests extends TestCase {
         $rave->setAmount($newAmountDouble);
         $amountGetterDouble = $rave->getAmount();
 
-        $this->assertInternalType("integer", $amountGetterInt);
+        $this->assertTrue(is_int( $amountGetterInt));
         $this->assertEquals($newAmountInt, $amountGetterInt);
-        $this->assertInternalType("double", $amountGetterDouble);
+        $this->assertTrue(is_double( $amountGetterDouble));
         $this->assertEquals($newAmountDouble, $amountGetterDouble);
     }
 
@@ -160,7 +164,9 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
+     * @throws \ReflectionException
      */
     function settingKeys(Rave $rave) {
 
@@ -186,6 +192,7 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
      */
     function settingPaymentMethod(Rave $rave) {
@@ -194,7 +201,7 @@ class UnitTests extends TestCase {
         $rave->setPaymentMethod($newPaymentMethod);
         $paymentMethodGetter = $rave->getPaymentMethod();
 
-        $this->assertInternalType("string", $paymentMethodGetter);
+        $this->assertTrue(is_string($paymentMethodGetter));
         $this->assertEquals($newPaymentMethod, $paymentMethodGetter);
     }
 
@@ -203,6 +210,7 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
      */
     function settingDescription(Rave $rave) {
@@ -211,7 +219,7 @@ class UnitTests extends TestCase {
         $rave->setDescription($newDescription);
         $descriptionGetter = $rave->getDescription();
 
-        $this->assertInternalType("string", $descriptionGetter);
+        $this->assertTrue(is_string($descriptionGetter));
         $this->assertEquals($newDescription, $descriptionGetter);
     }
 
@@ -220,6 +228,7 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
      */
     function settingLogo(Rave $rave) {
@@ -228,7 +237,7 @@ class UnitTests extends TestCase {
         $rave->setLogo($newLogo);
         $logoGetter = $rave->getLogo();
 
-        $this->assertInternalType("string", $logoGetter);
+        $this->assertTrue(is_string( $logoGetter));
         $this->assertEquals($newLogo, $logoGetter);
     }
 
@@ -237,6 +246,7 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
      */
     function settingTitle(Rave $rave) {
@@ -245,7 +255,7 @@ class UnitTests extends TestCase {
         $rave->setTitle($newTitle);
         $titleGetter = $rave->getTitle();
 
-        $this->assertInternalType("string", $titleGetter);
+        $this->assertTrue(is_string($titleGetter));
         $this->assertEquals($newTitle, $titleGetter);
     }
 
@@ -254,6 +264,7 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
      */
     function settingCountry(Rave $rave) {
@@ -262,7 +273,7 @@ class UnitTests extends TestCase {
         $rave->setCountry($newCountry);
         $countryGetter = $rave->getCountry();
 
-        $this->assertInternalType("string", $countryGetter);
+        $this->assertTrue(is_string($countryGetter));
         $this->assertEquals($newCountry, $countryGetter);
     }
 
@@ -271,6 +282,7 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
      */
     function settingCurrency(Rave $rave) {
@@ -279,7 +291,7 @@ class UnitTests extends TestCase {
         $rave->setCurrency($newCurrency);
         $currencyGetter = $rave->getCurrency();
 
-        $this->assertInternalType("string", $currencyGetter);
+        $this->assertTrue(is_string( $currencyGetter));
         $this->assertEquals($newCurrency, $currencyGetter);
     }
 
@@ -288,6 +300,7 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
      */
     function settingEmail(Rave $rave) {
@@ -296,7 +309,7 @@ class UnitTests extends TestCase {
         $rave->setEmail($newEmail);
         $emailGetter = $rave->getEmail();
 
-        $this->assertInternalType("string", $emailGetter);
+        $this->assertTrue(is_string($emailGetter));
         $this->assertEquals($newEmail, $emailGetter);
     }
 
@@ -305,6 +318,7 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
      */
     function settingFirstname(Rave $rave) {
@@ -313,7 +327,7 @@ class UnitTests extends TestCase {
         $rave->setFirstname($newFirstname);
         $firstnameGetter = $rave->getFirstname();
 
-        $this->assertInternalType("string", $firstnameGetter);
+        $this->assertTrue(is_string( $firstnameGetter));
         $this->assertEquals($newFirstname, $firstnameGetter);
     }
 
@@ -322,6 +336,7 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
      */
     function settingLastname(Rave $rave) {
@@ -330,7 +345,7 @@ class UnitTests extends TestCase {
         $rave->setLastname($newLastname);
         $lastnameGetter = $rave->getLastname();
 
-        $this->assertInternalType("string", $lastnameGetter);
+        $this->assertTrue(is_string($lastnameGetter));
         $this->assertEquals($newLastname, $lastnameGetter);
     }
 
@@ -347,7 +362,7 @@ class UnitTests extends TestCase {
         $rave->setPhoneNumber($newPhoneNumber);
         $phoneNumberGetter = $rave->getPhoneNumber();
 
-        $this->assertInternalType("string", $phoneNumberGetter);
+        $this->assertTrue(is_string($phoneNumberGetter));
         $this->assertEquals($newPhoneNumber, $phoneNumberGetter);
     }
 
@@ -356,6 +371,7 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
      */
     function settingPayButtonText(Rave $rave) {
@@ -364,7 +380,7 @@ class UnitTests extends TestCase {
         $rave->setPayButtonText($newPayButtonText);
         $payButtonTextGetter = $rave->getPayButtonText();
 
-        $this->assertInternalType("string", $payButtonTextGetter);
+        $this->assertTrue(is_string($payButtonTextGetter));
         $this->assertEquals($newPayButtonText, $payButtonTextGetter);
     }
 
@@ -373,6 +389,7 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
      */
     function settingRedirectUrl(Rave $rave) {
@@ -381,7 +398,7 @@ class UnitTests extends TestCase {
         $rave->setRedirectUrl($newRedirectUrl);
         $redirectUrlGetter = $rave->getRedirectUrl();
 
-        $this->assertInternalType("string", $redirectUrlGetter);
+        $this->assertTrue(is_string( $redirectUrlGetter));
         $this->assertEquals($newRedirectUrl, $redirectUrlGetter);
     }
 
@@ -390,7 +407,9 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
+     * @throws \ReflectionException
      */
     function settingEventHandler(Rave $rave) {
 
@@ -406,14 +425,15 @@ class UnitTests extends TestCase {
      *
      * @test
      * @depends initiateRaveFromApp
+     * @param Rave $rave
      * @return void
      */
     function settingMetaData(Rave $rave) {
 
-        $newMetaData = ["date" => Carbon::now()];
+        $newMetaData = ["date" => $date = Carbon::now()];
         $rave->setMetaData($newMetaData);
         $metaData = $rave->getMetaData();
 
-        $this->assertArraySubset($newMetaData, $metaData[0]);
+        $this->assertEquals($metaData['date'], $date);
     }
 }
