@@ -595,7 +595,7 @@ class Rave
             return $response->body;
         } else {
             if ($this->verifyCount > 4) {
-                $this->paymentCanceled($this->txref, $response->body);
+                return $this->paymentCanceled($this->txref, $response->body);
             } else {
                 sleep(3);
                 $this->verifyTransaction($this->txref);
