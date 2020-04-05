@@ -2,10 +2,10 @@
 
 namespace KingFlamez\Rave;
 
-use Illuminate\Support\Str;
 use stdClass;
 use Unirest\Request;
 use Unirest\Request\Body;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Http\Request as LaravelRequest;
