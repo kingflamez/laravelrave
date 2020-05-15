@@ -64,15 +64,15 @@ class Rave
         $this->request = $request;
         $this->body = $body;
         $this->unirestRequest = $unirestRequest;
-        $prefix = Config::get('rave.prefix');
+        $prefix = env('RAVE_PREFIX');
         $overrideRefWithPrefix = false;
 
-        $this->publicKey = Config::get('rave.publicKey');
-        $this->secretKey = Config::get('rave.secretKey');
-        $this->env = Config::get('rave.env');
-        $this->customLogo = Config::get('rave.logo');
-        $this->customTitle = Config::get('rave.title');
-        $this->secretHash = Config::get('rave.secretHash');
+        $this->publicKey = env('RAVE_PUBLIC_KEY');
+        $this->secretKey = env('RAVE_SECRET_KEY');
+        $this->env = env('RAVE_ENVIRONMENT');
+        $this->customLogo = env('RAVE_LOGO');
+        $this->customTitle = env('RAVE_TITLE');
+        $this->secretHash = env('RAVE_SECRET_HASH');
         $this->transactionPrefix = $prefix . '_';
         $this->overrideTransactionReference = $overrideRefWithPrefix;
 
