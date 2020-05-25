@@ -895,7 +895,8 @@ class Rave
             'meta' => $meta,
             'seckey' => $this->secretKey,
             'split_type' => $this->request->split_type,
-            'split_value' => $this->request->split_value
+            'split_value' => $this->request->split_value,
+            'country' => $this->request->country
         ];
 
         // Make request to endpoint using unirest.
