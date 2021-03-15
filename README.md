@@ -1,4 +1,4 @@
-# Flutterwave Rave (Laravel 5 Package)
+# Flutterwave Rave (Laravel 5,7,8 Package)
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
