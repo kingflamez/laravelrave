@@ -76,12 +76,12 @@ module.exports = {
             }
         ],
         [
-            ("meta",
+            "meta",
             {
                 name: "twitter:description",
                 content:
                     "A flutterwave laravel package to integrate with Laravel APIs seamlessly"
-            })
+            }
         ],
         [
             "meta",
