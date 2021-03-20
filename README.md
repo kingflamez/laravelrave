@@ -1,4 +1,4 @@
-# Flutterwave Rave (Laravel 5 Package)
+# Flutterwave 🦄🦄(Laravel Package)
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
@@ -7,7 +7,7 @@
 
 > Implement Flutterwave Rave payment gateway easily with Laravel
 
-- Go to [Flutterwave](https://rave.flutterwave.com/) to get your public and private key
+- Go to [Flutterwave](https://dashboard.flutterwave.com/) to get your public and private key
 
 
 ## Documentation
@@ -16,12 +16,6 @@
 
 
 > ### A sample implementation can be found [here](https://github.com/kingflamez/laravelrave-implementation/)
-
-
-## ToDo
-
- - Support Direct Charges
- - Support Tokenized payment
 
 
 ## Credits
