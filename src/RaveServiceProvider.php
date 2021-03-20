@@ -17,10 +17,10 @@ class RaveServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $config = realpath(__DIR__.'/../resources/config/rave.php');
+        $config = realpath(__DIR__.'/../resources/config/flutterwave.php');
 
         $this->publishes([
-            $config => config_path('rave.php')
+            $config => config_path('flutterwave.php')
         ]);
     }
 
