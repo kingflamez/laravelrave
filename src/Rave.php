@@ -142,4 +142,51 @@ class Rave
 
         return null;
     }
+
+
+
+    /**
+     * Charge via NGN Bank Transfer
+     * @param $data
+     * @return object
+     */
+    public function chargeGHMomo(array $data)
+    {
+        // add currency
+        $data['currency'] = 'GHS';
+        $payment = Http::withToken($this->secretKey)->post(
+            $this->baseUrl . '/charges?type=mobile_money_ghana',
+            $data
+        )->json();
+
+        if ($payment['status'] === 'success') {
+            return  $payment['meta']['authorization']['redirect'];
+        }
+
+        return null;
+    }
+
+
+    /**
+     * Charge via NGN Bank Transfer
+     * @param $data
+     * @return object
+     */
+    public function chargeRWMomo(array $data)
+    {
+        // add currency
+        $data['currency'] = 'RWF';
+        $payment = Http::withToken($this->secretKey)->post(
+            $this->baseUrl . '/charges?type=mobile_money_rwanda',
+            $data
+        )->json();
+
+        if ($payment['status'] === 'success') {
+            return  $payment['meta']['authorization']['redirect'];
+        }
+
+        return null;
+    }
+
+
 }

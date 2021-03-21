@@ -138,7 +138,7 @@ module.exports = {
       },
       {
         title: 'Payments',
-        children: ['/payments/payment-modal.html', '/payments/webhook.html', '/payments/ach-payments.html', '/payments/ngn-bank-transfer.html',]
+        children: ['/payments/payment-modal.html', '/payments/webhook.html', '/payments/ach-payments.html', '/payments/ngn-bank-transfer.html', '/payments/gh-mobile-money.html']
       }
     ],
     displayAllHeaders: true
