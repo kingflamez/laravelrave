@@ -61,8 +61,7 @@ class Rave
         if (array_key_exists('data', $payment)) {
             return $payment['data'];
         }
-        Log::info($payment);
-        return false;
+        return null;
     }
 
 
@@ -81,9 +80,9 @@ class Rave
 
 
     /**
-     * Reaches out to Flutterwave
+     * Confirms webhook `verifi-hash` is the same as the environment variable
      * @param $data
-     * @return object
+     * @return boolean
      */
     public function verifyWebhook()
     {
@@ -98,5 +97,49 @@ class Rave
             }
         }
         return false;
+    }
+
+
+
+    /**
+     * Charge via ACH Payment
+     * @param $data
+     * @return object
+     */
+    public function chargeACHPayment(array $data)
+    {
+        $payment = Http::withToken($this->secretKey)->post(
+            $this->baseUrl . '/charges?type=ach_payment',
+            $data
+        )->json();
+
+        if ($payment['status'] === 'success') {
+            return  $payment['data'];
+        }
+
+        return null;
+    }
+
+
+
+    /**
+     * Charge via NGN Bank Transfer
+     * @param $data
+     * @return object
+     */
+    public function chargeNGNTransfer(array $data)
+    {
+        // add currency
+        $data['currency'] = 'NGN';
+        $payment = Http::withToken($this->secretKey)->post(
+            $this->baseUrl . '/charges?type=bank_transfer',
+            $data
+        )->json();
+
+        if ($payment['status'] === 'success') {
+            return  $payment['meta']['authorization'];
+        }
+
+        return null;
     }
 }

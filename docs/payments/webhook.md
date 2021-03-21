@@ -16,11 +16,11 @@ If you use Flutterwave to accept alternate payment methods like USSD, Mpesa, and
 
 You might also use webhooks to:
 
--   Update a customer's membership record in your database when a subscription payment succeeds.
+- Update a customer's membership record in your database when a subscription payment succeeds.
 
--   Email a customer when a subscription payment fails.
+- Email a customer when a subscription payment fails.
 
--   Update your database when the status of a pending payment is updated to successful.
+- Update your database when the status of a pending payment is updated to successful.
 
 NB: Not in all cases would you be able to rely completely on webhooks to get notified, an example is if your server is experiencing a downtime and your hook endpoints are affected, some customers might still be transacting independently of that and the hook call triggered would fail because your server was unreachable.
 
@@ -32,7 +32,7 @@ In such cases we advise that developers set up a re-query service that goes to p
 
 <p style="text-align: center">Login to you Flutterwave dashboard then click on settings , on the setting page navigate to webhooks to add a webhook.</p>
 
-<img src="https://files.readme.io/6bda58d-Screenshot_2018-04-07_16.24.27.png" style="margin: 0 auto;" >
+<img src="https://files.readme.io/fd1589b-webhook.png" style="margin: 0 auto;" >
 
 <p style="text-align: center">Once on the webhook page, click the input text to add your webhook and use the save action button to save it.</p>
 
@@ -87,18 +87,91 @@ class FlutterwaveController extends Controller
     $verified = Flutterwave::verifyWebhook();
 
     // if it is a charge event, verify and confirm it is a successful transaction
-    if ($verified && $request->event == 'charge.completed') {
+    if ($verified && $request->event == 'charge.completed' && $request->data->status == 'successful') {
         $verificationData = Flutterwave::verifyPayment($request->data['id']);
         if ($verificationData['status'] === 'success') {
         // process for successful charge
 
         }
-        
+
     }
   }
 
 }
 
+```
+
+## Webhook Samples
+
+### Successful Payment
+
+```json
+{
+  "event": "charge.completed",
+  "data": {
+    "id": 285959875,
+    "tx_ref": "Links-616626414629",
+    "flw_ref": "PeterEkene/FLW270177170",
+    "device_fingerprint": "a42937f4a73ce8bb8b8df14e63a2df31",
+    "amount": 100,
+    "currency": "NGN",
+    "charged_amount": 100,
+    "app_fee": 1.4,
+    "merchant_fee": 0,
+    "processor_response": "Approved by Financial Institution",
+    "auth_model": "PIN",
+    "ip": "197.210.64.96",
+    "narration": "CARD Transaction ",
+    "status": "successful",
+    "payment_type": "card",
+    "created_at": "2020-07-06T19:17:04.000Z",
+    "account_id": 17321,
+    "customer": {
+      "id": 215604089,
+      "name": "Yemi Desola",
+      "phone_number": null,
+      "email": "user@gmail.com",
+      "created_at": "2020-07-06T19:17:04.000Z"
+    },
+    "card": {
+      "first_6digits": "123456",
+      "last_4digits": "7889",
+      "issuer": "VERVE FIRST CITY MONUMENT BANK PLC",
+      "country": "NG",
+      "type": "VERVE",
+      "expiry": "02/23"
+    }
+  }
+}
+```
+
+### Successful Transfers
+
+```json
+{
+  "event": "transfer.completed",
+  "event.type": "Transfer",
+  "data": {
+    "id": 33286,
+    "account_number": "0690000033",
+    "bank_name": "ACCESS BANK NIGERIA",
+    "bank_code": "044",
+    "fullname": "Bale Gary",
+    "created_at": "2020-04-14T16:39:17.000Z",
+    "currency": "NGN",
+    "debit_currency": "NGN",
+    "amount": 30020,
+    "fee": 26.875,
+    "status": "SUCCESSFUL",
+    "reference": "a0a827b1eca65311_PMCKDU_5",
+    "meta": null,
+    "narration": "lolololo",
+    "approver": null,
+    "complete_message": "Successful",
+    "requires_approval": 0,
+    "is_approved": 1
+  }
+}
 ```
 
 ## Best practices
