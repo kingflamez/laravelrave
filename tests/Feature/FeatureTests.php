@@ -5,10 +5,8 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Tests\Stubs\Request;
 use KingFlamez\Rave\Rave;
-use Unirest\Request\Body;
 use Tests\Stubs\PaymentEventHandler;
 use Tests\Concerns\ExtractProperties;
-use Unirest\Request as UnirestRequest;
 
 class FeatureTests extends TestCase {
 
@@ -32,7 +30,7 @@ class FeatureTests extends TestCase {
         $request->phonenumber = '080232382382';
         $request->payment_method = 'online';
         $request->pay_button_text = 'Pay Now';
-        $rave = new Rave($request, new UnirestRequest, new Body);
+        $rave = new Rave();
         $rave->initialize("http://localhost");
 
         $this->assertTrue($rave instanceof Rave);
@@ -107,7 +105,7 @@ class FeatureTests extends TestCase {
     function paymentCancelledTest() {
         $request = new Request();
         $request->cancelled = true;
-        $rave = new Rave($request, new UnirestRequest, new Body);
+        $rave = new Rave();
         $rave = $rave->createReferenceNumber();
         $ref = $rave->getReferenceNumber();
 
