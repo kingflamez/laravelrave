@@ -43,7 +43,7 @@ Publish the configuration file using this command:
 php artisan vendor:publish --provider="KingFlamez\Rave\RaveServiceProvider"
 ```
 
-A configuration-file named **`rave.php`** will be placed in your **`config`** directory
+A configuration-file named **`flutterwave.php`** will be placed in your **`config`** directory
 
 ## Usage
 

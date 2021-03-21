@@ -75,7 +75,7 @@ abstract class TestCase extends BaseTestCase {
     {
         array_walk($this->envVars, function ($value, $key) use (&$app) {
 
-            $app["config"]->set("rave.{$key}", $value);
+            $app["config"]->set("flutterwave.{$key}", $value);
         });
     }
 }
