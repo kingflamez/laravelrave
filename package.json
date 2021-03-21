@@ -7,7 +7,7 @@
     "name": "Oluwole Adebiyi (Kingflamez)",
     "email": "flamekeed@gmail.com"
   },
-  "repository": "https://github.com/kingflamez/laravelrave/Laravel Flutterwave Docs",
+  "repository": "https://github.com/kingflamez/laravelrave/docs",
   "scripts": {
     "dev": "vuepress dev docs",
     "build": "vuepress build docs"
