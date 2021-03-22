@@ -4,6 +4,7 @@ namespace KingFlamez\Rave;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use KingFlamez\Rave\Helpers\Payments;
 
 /**
  * Flutterwave's Rave payment laravel package
@@ -61,14 +62,30 @@ class Rave
         if (array_key_exists('data', $payment)) {
             return $payment['data'];
         }
-        Log::info($payment);
-        return false;
+        return null;
     }
 
 
 
     /**
-     * Reaches out to Flutterwave
+     * Gets a transaction ID depending on the redirect structure
+     * @return string
+     */
+    public function getTransactionIDFromCallback()
+    {
+        $transactionID = request()->transaction_id;
+
+        if (!$transactionID) {
+            $transactionID = json_decode(request()->resp)->data->id;
+        }
+
+        return $transactionID;
+    }
+
+
+
+    /**
+     * Reaches out to Flutterwave to verify a transaction
      * @param $id
      * @return object
      */
@@ -81,9 +98,9 @@ class Rave
 
 
     /**
-     * Reaches out to Flutterwave
+     * Confirms webhook `verifi-hash` is the same as the environment variable
      * @param $data
-     * @return object
+     * @return boolean
      */
     public function verifyWebhook()
     {
@@ -98,5 +115,17 @@ class Rave
             }
         }
         return false;
+    }
+
+
+
+    /**
+     * Payments
+     * @return Payments
+     */
+    public function payments()
+    {
+        $payments = new Payments();
+        return $payments;
     }
 }
