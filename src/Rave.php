@@ -4,6 +4,7 @@ namespace KingFlamez\Rave;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use KingFlamez\Rave\Helpers\Payments;
 
 /**
  * Flutterwave's Rave payment laravel package
@@ -67,7 +68,24 @@ class Rave
 
 
     /**
-     * Reaches out to Flutterwave
+     * Gets a transaction ID depending on the redirect structure
+     * @return string
+     */
+    public function getTransactionIDFromCallback()
+    {
+        $transactionID = request()->transaction_id;
+
+        if (!$transactionID) {
+            $transactionID = json_decode(request()->resp)->data->id;
+        }
+
+        return $transactionID;
+    }
+
+
+
+    /**
+     * Reaches out to Flutterwave to verify a transaction
      * @param $id
      * @return object
      */
@@ -102,91 +120,12 @@ class Rave
 
 
     /**
-     * Charge via ACH Payment
-     * @param $data
-     * @return object
+     * Payments
+     * @return Payments
      */
-    public function chargeACHPayment(array $data)
+    public function payments()
     {
-        $payment = Http::withToken($this->secretKey)->post(
-            $this->baseUrl . '/charges?type=ach_payment',
-            $data
-        )->json();
-
-        if ($payment['status'] === 'success') {
-            return  $payment['data'];
-        }
-
-        return null;
+        $payments = new Payments();
+        return $payments;
     }
-
-
-
-    /**
-     * Charge via NGN Bank Transfer
-     * @param $data
-     * @return object
-     */
-    public function chargeNGNTransfer(array $data)
-    {
-        // add currency
-        $data['currency'] = 'NGN';
-        $payment = Http::withToken($this->secretKey)->post(
-            $this->baseUrl . '/charges?type=bank_transfer',
-            $data
-        )->json();
-
-        if ($payment['status'] === 'success') {
-            return  $payment['meta']['authorization'];
-        }
-
-        return null;
-    }
-
-
-
-    /**
-     * Charge via NGN Bank Transfer
-     * @param $data
-     * @return object
-     */
-    public function chargeGHMomo(array $data)
-    {
-        // add currency
-        $data['currency'] = 'GHS';
-        $payment = Http::withToken($this->secretKey)->post(
-            $this->baseUrl . '/charges?type=mobile_money_ghana',
-            $data
-        )->json();
-
-        if ($payment['status'] === 'success') {
-            return  $payment['meta']['authorization']['redirect'];
-        }
-
-        return null;
-    }
-
-
-    /**
-     * Charge via NGN Bank Transfer
-     * @param $data
-     * @return object
-     */
-    public function chargeRWMomo(array $data)
-    {
-        // add currency
-        $data['currency'] = 'RWF';
-        $payment = Http::withToken($this->secretKey)->post(
-            $this->baseUrl . '/charges?type=mobile_money_rwanda',
-            $data
-        )->json();
-
-        if ($payment['status'] === 'success') {
-            return  $payment['meta']['authorization']['redirect'];
-        }
-
-        return null;
-    }
-
-
 }

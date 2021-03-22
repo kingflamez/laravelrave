@@ -137,8 +137,23 @@ module.exports = {
         children: ['/getting-started/installation.html', '/getting-started/payment-implementation.html']
       },
       {
-        title: 'Payments',
-        children: ['/payments/payment-modal.html', '/payments/webhook.html', '/payments/ach-payments.html', '/payments/ngn-bank-transfer.html', '/payments/gh-mobile-money.html']
+        title: ' Verification/Notification',
+        children: ['/verification/introduction.html', '/verification/webhook.html', '/verification/callback.html']
+      },
+      {
+        title: 'Payments using APIs',
+        children: [
+          '/payments/introduction.html',
+          '/payments/ach-payments.html',
+          '/payments/ngn-bank-transfer.html',
+          '/payments/gh-mobile-money.html',
+          '/payments/rw-mobile-money.html',
+          '/payments/ug-mobile-money.html',
+          '/payments/zambia-mobile-money.html',
+          '/payments/mpesa-mobile-money.html',
+          '/payments/voucher-payments.html',
+          '/payments/francophone-mobile-money.html'
+        ]
       }
     ],
     displayAllHeaders: true

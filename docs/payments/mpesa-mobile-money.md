@@ -1,28 +1,35 @@
-# Charge via Rwanda mobile money
+# Charge via Mpesa
 
-This document describes how to collect payments via Rwanda mobile money.
+This document describes how to collect payments via Mpesa.
 
 ```php
 <?php
 
 $tx_ref = Flutterwave::generateReference();
-$order_id = Flutterwave::generateReference('momo');
 
 $data = [
-    'amount' => 100,
+    'amount' => 1500,
     'email' => 'wole@email.co',
-    'redirect_url' => route('callback'),
     'phone_number' => '054709929220',
-    'tx_ref' => $tx_ref,
-    'order_id' => $order_id
+    'tx_ref' => $tx_ref
 ];
 
-$charge = Flutterwave::payments()->momoRW($data);
+$charge = Flutterwave::payments()->mpesa($data);
 
 if ($charge['status'] === 'success') {
     # code...
     // Redirect to the charge url
-    return redirect($charge['data']['redirect']);
+    $data = Flutterwave::verifyTransaction($charge['data']['id']);
+    return dd($data);
+    // Get the transaction from your DB using the transaction reference (txref)
+    // Check if you have previously given value for the transaction. If you have, redirect to your successpage else, continue
+    // Confirm that the $data['data']['status'] is 'successful'
+    // Confirm that the currency on your db transaction is equal to the returned currency
+    // Confirm that the db transaction amount is equal to the returned amount
+    // Update the db transaction record (including parameters that didn't exist before the transaction is completed. for audit purpose)
+    // Give value for the transaction
+    // Update the transaction to note that you have given value for the transaction
+    // You can also redirect to your success page from here
 }
 ```
 
@@ -30,13 +37,11 @@ if ($charge['status'] === 'success') {
 
 | Parameter          | Required | Description                                                                                                                                                                              |
 | ------------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| amount             | True     | This is the amount to be charged. Expected value is RWF                                                                                                                                  |
+| amount             | True     | This is the amount to be charged. Expected value is ZMW                                                                                                                                  |
 | email              | True     | This is the email address of the customer.                                                                                                                                               |
 | tx_ref             | True     | This is a unique reference, unique to the particular transaction being carried out. It is generated when it is not provided by the merchant for every transaction.                       |
-| order_id           | True     | Unique ref for the mobilemoney transaction to be provided by the merchant.                                                                                                               |
 | fullname           | False    | This is the customers full name. It should include first and last name of the customer.                                                                                                  |
-| phone_number       | False    | This is the phone number linked to the customer's mobile money account.                                                                                                                  |
-| redirect_url       | False    | URL to redirect to when a transaction is completed.                                                                                                                                      |
+| phone_number       | True     | This is the phone number linked to the customer's mobile money account.                                                                                                                  |
 | client_ip          | False    | IP - Internet Protocol. This represents the current IP address of the customer carrying out the transaction                                                                              |
 | device_fingerprint | False    | This is the fingerprint for the device being used. It can be generated using a library on whatever platform is being used.                                                               |
 | meta               | False    | This is used to include additional payment information`                                                                                                                                  |
