@@ -154,6 +154,18 @@ module.exports = {
           '/payments/voucher-payments.html',
           '/payments/francophone-mobile-money.html'
         ]
+      },
+      {
+        title: 'Transfers',
+        children: [
+          '/transfers/introduction.html',
+        ]
+      },
+      {
+        title: 'Banks',
+        children: [
+          '/banks/list-banks.html',
+        ]
       }
     ],
     displayAllHeaders: true

@@ -4,6 +4,7 @@ namespace KingFlamez\Rave;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use KingFlamez\Rave\Helpers\Banks;
 use KingFlamez\Rave\Helpers\Payments;
 
 /**
@@ -125,7 +126,19 @@ class Rave
      */
     public function payments()
     {
-        $payments = new Payments();
+        $payments = new Payments($this->publicKey, $this->secretKey, $this->baseUrl);
         return $payments;
+    }
+
+
+
+    /**
+     * Banks
+     * @return Banks
+     */
+    public function banks()
+    {
+        $banks = new Banks($this->publicKey, $this->secretKey, $this->baseUrl);
+        return $banks;
     }
 }

@@ -20,13 +20,12 @@ class Payments
     /**
      * Construct
      */
-    function __construct()
+    function __construct(String $publicKey, String $secretKey, String $baseUrl)
     {
 
-        $this->publicKey = config('flutterwave.publicKey');
-        $this->secretKey = config('flutterwave.secretKey');
-        $this->secretHash = config('flutterwave.secretHash');
-        $this->baseUrl = 'https://api.flutterwave.com/v3';
+        $this->publicKey = $publicKey;
+        $this->secretKey = $secretKey;
+        $this->baseUrl = $baseUrl;
     }
 
 
