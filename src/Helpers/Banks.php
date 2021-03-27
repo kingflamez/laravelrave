@@ -147,4 +147,25 @@ class Banks
 
         return $banks;
     }
+
+
+    /**
+     * Get Tanzanian Banks
+     * @param bankId
+     * @return object
+     */
+    public function branches($bankId)
+    {
+        $branches = Http::withToken($this->secretKey)->get(
+            $this->baseUrl . '/banks/'.$bankId.'/branches'
+        )->json();
+
+
+        // sort banks by name
+        // usort($banks['data'], function ($a, $b) {
+        //     return strcmp($a['name'], $b['name']);
+        // });
+
+        return $branches;
+    }
 }

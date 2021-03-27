@@ -157,15 +157,11 @@ module.exports = {
       },
       {
         title: 'Transfers',
-        children: [
-          '/transfers/introduction.html',
-        ]
+        children: ['/transfers/introduction.html', '/transfers/initiate-transfers.html', '/transfers/retry-transfer.html', '/transfers/bulk-transfer.html', '/transfers/fees.html']
       },
       {
         title: 'Banks',
-        children: [
-          '/banks/list-banks.html',
-        ]
+        children: ['/banks/list-banks.html', '/banks/bank-branches.html']
       }
     ],
     displayAllHeaders: true
