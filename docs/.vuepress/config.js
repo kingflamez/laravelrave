@@ -154,6 +154,28 @@ module.exports = {
           '/payments/voucher-payments.html',
           '/payments/francophone-mobile-money.html'
         ]
+      },
+      {
+        title: 'Transfers',
+        children: [
+          '/transfers/introduction.html',
+          '/transfers/initiate-transfers.html',
+          '/transfers/retry-transfer.html',
+          '/transfers/bulk-transfer.html',
+          '/transfers/fees.html',
+          '/transfers/fetch-transfers.html',
+          '/transfers/fetch-a-transfer.html',
+          '/transfers/retry-transfer-status.html',
+          '/transfers/transfer-rates.html'
+        ]
+      },
+      {
+        title: 'Beneficiaries',
+        children: ['/beneficiaries/create-beneficiary.html']
+      },
+      {
+        title: 'Banks',
+        children: ['/banks/list-banks.html', '/banks/bank-branches.html']
       }
     ],
     displayAllHeaders: true

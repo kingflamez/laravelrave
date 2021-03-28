@@ -4,7 +4,10 @@ namespace KingFlamez\Rave;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use KingFlamez\Rave\Helpers\Banks;
+use KingFlamez\Rave\Helpers\Beneficiary;
 use KingFlamez\Rave\Helpers\Payments;
+use KingFlamez\Rave\Helpers\Transfers;
 
 /**
  * Flutterwave's Rave payment laravel package
@@ -45,7 +48,6 @@ class Rave
         return 'flw_' . uniqid(time());
     }
 
-
     /**
      * Reaches out to Flutterwave to initialize a payment
      * @param $data
@@ -66,7 +68,6 @@ class Rave
     }
 
 
-
     /**
      * Gets a transaction ID depending on the redirect structure
      * @return string
@@ -82,8 +83,6 @@ class Rave
         return $transactionID;
     }
 
-
-
     /**
      * Reaches out to Flutterwave to verify a transaction
      * @param $id
@@ -94,8 +93,6 @@ class Rave
         $data =  Http::withToken($this->secretKey)->get($this->baseUrl . "/transactions/" . $id . '/verify')->json();
         return $data;
     }
-
-
 
     /**
      * Confirms webhook `verifi-hash` is the same as the environment variable
@@ -117,15 +114,43 @@ class Rave
         return false;
     }
 
-
-
     /**
      * Payments
      * @return Payments
      */
     public function payments()
     {
-        $payments = new Payments();
+        $payments = new Payments($this->publicKey, $this->secretKey, $this->baseUrl);
         return $payments;
+    }
+
+    /**
+     * Banks
+     * @return Banks
+     */
+    public function banks()
+    {
+        $banks = new Banks($this->publicKey, $this->secretKey, $this->baseUrl);
+        return $banks;
+    }
+
+    /**
+     * Transfers
+     * @return Transfers
+     */
+    public function transfers()
+    {
+        $transfers = new Transfers($this->publicKey, $this->secretKey, $this->baseUrl);
+        return $transfers;
+    }
+
+    /**
+     * Beneficiary
+     * @return Beneficiary
+     */
+    public function beneficiaries()
+    {
+        $beneficiary = new Beneficiary($this->publicKey, $this->secretKey, $this->baseUrl);
+        return $beneficiary;
     }
 }
