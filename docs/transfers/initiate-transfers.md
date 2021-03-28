@@ -20,7 +20,25 @@ $transfer = Flutterwave::transfers()->initiate($data);
 dd($transfer);
 ```
 
-Please setup a [webhook](/verification/webhooks) to get status on your transfers. When you initiate a transfer you get a queuing status, once the transfer is successful or failed, we hit your webhook to alert you, you can update the status of the transfer from there
+Please setup a [webhook](/verification/webhooks) to get status on your transfers. When you initiate a transfer you get a queuing status, once the transfer is successful or failed, we hit your webhook to alert you, you can update the status of the transfer from there.
+
+> You can also setup a cron job that checks all pending transfers status in your db and updates them accordingly
+
+```php
+
+$transferId = 187092; // get transfer ID from your DB
+$transfer = Flutterwave::transfers()->fetch($transferId);
+
+if($transfer['data']['status'] === 'SUCCESSFUL') {
+    // update transfer status to successful in your db
+} else if ($transfer['data']['status'] === 'FAILED') {
+    // update transfer status to failed in your db
+    // revert customer balance back
+} else if ($transfer['data']['status'] === 'PENDING') {
+    // update transfer status to pending in your db
+}
+
+```
 
 ## Parameters
 

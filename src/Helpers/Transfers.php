@@ -91,4 +91,69 @@ class Transfers
         $transfer['data'] = $transfer['data'][0];
         return $transfer;
     }
+
+
+    /**
+     * Get All Transfers
+     * @param $data
+     * @return object
+     */
+    public function fetchAll(array $data)
+    {
+        $transfers = Http::withToken($this->secretKey)->get(
+            $this->baseUrl . '/transfers',
+            $data
+        )->json();
+
+        return $transfers;
+    }
+
+
+    /**
+     * Get A Transfer
+     * @param $id
+     * @return object
+     */
+    public function fetch($id)
+    {
+        $transfer = Http::withToken($this->secretKey)->get(
+            $this->baseUrl . '/transfers/' . $id
+        )->json();
+
+        return $transfer;
+    }
+
+
+    /**
+     * Get A Transfer Retry
+     * @param $id
+     * @return object
+     */
+    public function fetchRetries($id)
+    {
+        $transfer = Http::withToken($this->secretKey)->get(
+            $this->baseUrl . '/transfers/' . $id .'/retries'
+        )->json();
+
+        return $transfer;
+    }
+
+
+
+    /**
+     * Get Transfer Rates
+     * @param $data
+     * @return object
+     */
+    public function getTransferRate(array $data)
+    {
+        $transfer = Http::withToken($this->secretKey)->get(
+            $this->baseUrl . '/transfers/rates',
+            $data
+        )->json();
+
+        $transfer['data'] = $transfer['data'][0];
+        return $transfer;
+    }
+
 }

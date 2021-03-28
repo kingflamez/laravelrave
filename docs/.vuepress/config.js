@@ -157,7 +157,21 @@ module.exports = {
       },
       {
         title: 'Transfers',
-        children: ['/transfers/introduction.html', '/transfers/initiate-transfers.html', '/transfers/retry-transfer.html', '/transfers/bulk-transfer.html', '/transfers/fees.html']
+        children: [
+          '/transfers/introduction.html',
+          '/transfers/initiate-transfers.html',
+          '/transfers/retry-transfer.html',
+          '/transfers/bulk-transfer.html',
+          '/transfers/fees.html',
+          '/transfers/fetch-transfers.html',
+          '/transfers/fetch-a-transfer.html',
+          '/transfers/retry-transfer-status.html',
+          '/transfers/transfer-rates.html'
+        ]
+      },
+      {
+        title: 'Beneficiaries',
+        children: ['/beneficiaries/create-beneficiary.html']
       },
       {
         title: 'Banks',

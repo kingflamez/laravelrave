@@ -78,10 +78,19 @@ class FlutterwaveController extends Controller
 
     }
 
-    // if it is a transfer event, verify and confirm it is a successful transaction
-    if ($verified && $request->event == 'transfer.completed' && str_lower($request->data->status) == 'successful') {
-        
+    // if it is a transfer event, verify and confirm it is a successful transfer
+    if ($verified && $request->event == 'transfer.completed') {
 
+        $transfer = Flutterwave::transfers()->fetch($request->data['id']);
+
+        if($transfer['data']['status'] === 'SUCCESSFUL') {
+            // update transfer status to successful in your db
+        } else if ($transfer['data']['status'] === 'FAILED') {
+            // update transfer status to failed in your db
+            // revert customer balance back
+        } else if ($transfer['data']['status'] === 'PENDING') {
+            // update transfer status to pending in your db
+        }
 
     }
   }
