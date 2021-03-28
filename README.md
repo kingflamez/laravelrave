@@ -7,15 +7,12 @@
 
 > Implement Flutterwave Rave payment gateway easily with Laravel
 
-- Go to [Flutterwave](https://dashboard.flutterwave.com/) to get your public and private key
+- Go to [Flutterwave](https://dashboard.flutterwave.com/dashboard/settings/apis) to get your public and private key
 
 
 ## Documentation
 
-> ### A friendly documentation can be found [here](https://laravelrave.netlify.com/)
-
-
-> ### A sample implementation can be found [here](https://github.com/kingflamez/laravelrave-implementation/)
+ A friendly documentation can be found [here](https://laravelrave.netlify.com/)
 
 
 ## Credits
