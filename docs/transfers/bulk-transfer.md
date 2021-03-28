@@ -32,7 +32,7 @@ $transfer = Flutterwave::transfers()->bulk($data);
 dd($transfer);
 ```
 
-Please setup a [webhook](/verification/webhooks) to get status on your transfers. When you initiate a transfer you get a queuing status, once the transfer is successful or failed, we hit your webhook to alert you, you can update the status of the transfer from there
+Please setup a [webhook](/verification/webhook) to get status on your transfers. When you initiate a transfer you get a queuing status, once the transfer is successful or failed, we hit your webhook to alert you, you can update the status of the transfer from there
 
 ## Parameters
 
