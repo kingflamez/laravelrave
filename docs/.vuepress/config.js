@@ -171,7 +171,7 @@ module.exports = {
       },
       {
         title: 'Beneficiaries',
-        children: ['/beneficiaries/create-beneficiary.html']
+        children: ['/beneficiaries/create-beneficiary.html', '/beneficiaries/list-beneficiaries.html', '/beneficiaries/fetch-beneficiary.html', '/beneficiaries/delete-beneficiary.html']
       },
       {
         title: 'Banks',
