@@ -98,7 +98,7 @@ class Transfers
      * @param $data
      * @return object
      */
-    public function fetchAll(array $data)
+    public function fetchAll(array $data = [])
     {
         $transfers = Http::withToken($this->secretKey)->get(
             $this->baseUrl . '/transfers',

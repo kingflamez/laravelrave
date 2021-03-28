@@ -5,13 +5,13 @@
 ```php
 <?php
 $data = [
-    'account_number' => 0690000034,
+    'account_number' => '0690000034',
     'account_bank' => '044'
 ];
 
-$transfer = Flutterwave::beneficiaries()->create($data);
+$beneficiary = Flutterwave::beneficiaries()->create($data);
 
-dd($transfer);
+dd($beneficiary);
 ```
 
 ## Parameters
