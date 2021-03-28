@@ -31,6 +31,21 @@ Please feel free to fork this package and contribute by submitting a pull reques
 
 Kindly [follow me on twitter](https://twitter.com/mrflamez_)!
 
+## Features
+
+The current features have been implemented
+
+- Payment
+- Verification
+- Transfers
+- Banks
+- Beneficiaries
+
+I will be working on this next
+- Tokenized Charge
+- Pre Auth Charge
+
+> If there are features you need urgently, I will be willing to prioritize them, please reach out to my twitter account
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
