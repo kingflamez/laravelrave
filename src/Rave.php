@@ -61,10 +61,7 @@ class Rave
             $data
         )->json();
 
-        if (array_key_exists('data', $payment)) {
-            return $payment['data'];
-        }
-        return null;
+        return $payment;
     }
 
 
