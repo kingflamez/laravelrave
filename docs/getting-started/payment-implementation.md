@@ -69,7 +69,7 @@ class FlutterwaveController extends Controller
             'redirect_url' => route('callback'),
             'customer' => [
                 'email' => request()->email,
-                "phonenumber" => request()->phone,
+                "phone_number" => request()->phone,
                 "name" => request()->name
             ],
 
