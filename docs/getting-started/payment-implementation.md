@@ -99,7 +99,7 @@ class FlutterwaveController extends Controller
         
         $status = request()->status;
 
-        //if payments is successful
+        //if payment is successful
         if ($status ==  'successful') {
         
         $transactionID = Flutterwave::getTransactionIDFromCallback();
