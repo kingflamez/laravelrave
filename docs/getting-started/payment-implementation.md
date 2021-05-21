@@ -100,14 +100,14 @@ class FlutterwaveController extends Controller
         $status = request()->status;
 
         //if payments is successful
-        if ( $status ==  'successful') {
+        if ($status ==  'successful') {
         
         $transactionID = Flutterwave::getTransactionIDFromCallback();
         $data = Flutterwave::verifyTransaction($transactionID);
 
         dd($data);
+        }
         else{
-
             //Pass redirect for cancelled transaction here
         }
         // Get the transaction from your DB using the transaction reference (txref)
