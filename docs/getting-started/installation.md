@@ -52,13 +52,13 @@ Open your .env file and add your public key, secret key, environment variable an
 Get your keys form [here](https://dashboard.flutterwave.com/dashboard/settings/apis)
 
 ```php
-FLW_PUBLIC_KEY=FLWPUBK-xxxxxxxxxxxxxxxxxxxxx-X
-FLW_SECRET_KEY=FLWSECK-xxxxxxxxxxxxxxxxxxxxx-X
-FLW_SECRET_HASH='My_lovelysite123'
+RAVE_PUBLIC_KEY=FLWPUBK-xxxxxxxxxxxxxxxxxxxxx-X
+RAVE_SECRET_KEY=FLWSECK-xxxxxxxxxxxxxxxxxxxxx-X
+RAVE_SECRET_HASH='My_lovelysite123'
 ```
 
-* **FLW_PUBLIC_KEY -** This is the api public key gotten from your dashboard (compulsory)
+* **RAVE_PUBLIC_KEY -** This is the api public key gotten from your dashboard (compulsory)
 
-* **FLW_SECRET_KEY -** This is the api secret key gotten from your dashboard (compulsory)
+* **RAVE_SECRET_KEY -** This is the api secret key gotten from your dashboard (compulsory)
 
-* **FLW_SECRET_HASH -** This is the secret hash for your webhook
+* **RAVE_SECRET_HASH -** This is the secret hash for your webhook
