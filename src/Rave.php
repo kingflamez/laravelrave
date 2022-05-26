@@ -9,6 +9,7 @@ use KingFlamez\Rave\Helpers\Beneficiary;
 use KingFlamez\Rave\Helpers\Payments;
 use KingFlamez\Rave\Helpers\Transfers;
 use KingFlamez\Rave\Helpers\Verification;
+use KingFlamez\Rave\Helpers\Subaccount;
 
 /**
  * Flutterwave's Rave payment laravel package
@@ -161,4 +162,15 @@ class Rave
         $verification = new Verification($this->publicKey, $this->secretKey, $this->baseUrl);
         return $verification;
     }
+
+    /**
+     * Subaccounts
+     * @return Subaccount
+     */
+    public function subaccounts()
+    {
+        $subaccount = new Subaccount($this->publicKey, $this->secretKey, $this->baseUrl);
+        return $subaccount;
+    }
+
 }
