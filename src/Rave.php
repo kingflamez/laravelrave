@@ -32,6 +32,7 @@ class Rave
         $this->publicKey = config('flutterwave.publicKey');
         $this->secretKey = config('flutterwave.secretKey');
         $this->secretHash = config('flutterwave.secretHash');
+        $this->encryptionKey = config('flutterwave.encryptionKey');
         $this->baseUrl = 'https://api.flutterwave.com/v3';
     }
 
@@ -135,7 +136,7 @@ class Rave
      */
     public function payments()
     {
-        $payments = new Payments($this->publicKey, $this->secretKey, $this->baseUrl, $this->secretHash);
+        $payments = new Payments($this->publicKey, $this->secretKey, $this->baseUrl, $this->encryptionKey);
         return $payments;
     }
 
