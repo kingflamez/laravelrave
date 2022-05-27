@@ -83,6 +83,22 @@ class Rave
     }
 
     /**
+     * Reaches out to Flutterwave to validate a charge
+     * @param $data
+     * @return object
+     */
+    public function validateCharge(array $data)
+    {
+
+        $payment = Http::withToken($this->secretKey)->post(
+            $this->baseUrl . '/validate-charge',
+            $data
+        )->json();
+
+        return $payment;
+    }
+
+    /**
      * Reaches out to Flutterwave to verify a transaction
      * @param $id
      * @return object
