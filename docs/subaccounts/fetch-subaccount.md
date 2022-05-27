@@ -1,13 +1,13 @@
-# Fetch a beneficiary
+# Fetch a subaccount
 
-> Get a single transfer beneficiary details.
+> Get a single collection subaccount details.
 
 ```php
 <?php
 
-    $beneficiaryId = 12596;
+    $subaccountId = 12596;
     
-    $beneficiary = Flutterwave::beneficiaries()->fetch($beneficiaryId);
+    $subaccount = Flutterwave::subaccounts()->fetch($subaccountId);
 
-    dd($beneficiary);
+    dd($subaccount);
 ```
