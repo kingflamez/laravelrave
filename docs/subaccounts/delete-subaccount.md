@@ -1,13 +1,13 @@
-# Delete a beneficiary
+# Delete a subaccount
 
-> Delete a transfer beneficiary.
+> Delete a collection subaccount.
 
 ```php
 <?php
 
-    $beneficiaryId = 12596;
+    $subaccountId = 12596;
     
-    $beneficiary = Flutterwave::beneficiaries()->destroy($beneficiaryId);
+    $subaccount = Flutterwave::subaccounts()->destroy($subaccountId);
 
-    dd($beneficiary);
+    dd($subaccount);
 ```

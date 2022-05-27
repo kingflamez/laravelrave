@@ -1,12 +1,16 @@
 # Create a subaccount
 
-> Create a transfer subaccount
+> Create a collection subaccount
 
 ```php
 <?php
 $data = [
     'account_number' => '0690000034',
-    'account_bank' => '044'
+    'account_bank' => '044',
+    'business_name' => 'Christian Jombo and Sons',
+    'business_mobile' => '08000000000',
+    'split_type' => 'flat',
+    'split_value' => 1000
 ];
 
 $subaccount = Flutterwave::subaccounts()->create($data);
