@@ -16,9 +16,9 @@ class Helper
     //     return self::encrypt3Des($data, $key);
     // }
 
-    public static function encrypt3Des($data, $key)
+    public static function encrypt3Des(array $data, $key)
     {
-        $encData = openssl_encrypt($data, 'DES-EDE3', $key, OPENSSL_RAW_DATA);
+        $encData = openssl_encrypt(json_encode($data), 'DES-EDE3', $key, OPENSSL_RAW_DATA);
         return base64_encode($encData);
     }
 

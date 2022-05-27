@@ -20,12 +20,13 @@ class Payments
     /**
      * Construct
      */
-    function __construct(String $publicKey, String $secretKey, String $baseUrl)
+    function __construct(String $publicKey, String $secretKey, String $baseUrl, $secretHash = '')
     {
 
         $this->publicKey = $publicKey;
         $this->secretKey = $secretKey;
         $this->baseUrl = $baseUrl;
+        $this->secretHash = $secretHash;
     }
 
 
@@ -226,9 +227,12 @@ class Payments
      */
     public function card(array $data)
     {
+        $encryptedData = [];
+        $encryptedData['client'] = Helper::encrypt3Des($data, $this->secretHash);
+
         $payment = Http::withToken($this->secretKey)->post(
             $this->baseUrl . '/charges?type=card',
-            $data
+            $encryptedData
         )->json();
 
         if ($payment['status'] === 'success') {

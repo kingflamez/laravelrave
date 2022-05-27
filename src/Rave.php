@@ -135,7 +135,7 @@ class Rave
      */
     public function payments()
     {
-        $payments = new Payments($this->publicKey, $this->secretKey, $this->baseUrl);
+        $payments = new Payments($this->publicKey, $this->secretKey, $this->baseUrl, $this->secretHash);
         return $payments;
     }
 
