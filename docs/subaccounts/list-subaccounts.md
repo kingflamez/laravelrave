@@ -1,6 +1,6 @@
-# List all beneficiaries
+# List all subaccounts
 
-> Fetch all beneficiaries on your account.
+> Fetch all subaccounts on your account.
 
 ```php
 <?php
@@ -10,9 +10,9 @@
     ];
 
     // $data is optional
-    $beneficiaries = Flutterwave::beneficiaries()->fetchAll($data);
+    $subaccounts = Flutterwave::subaccounts()->fetchAll($data);
 
-    dd($beneficiaries);
+    dd($subaccounts);
 ```
 
 
@@ -21,4 +21,6 @@
 | Parameter | Required | Description                                                                                                                                                                                                 |
 | --------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | page | False     | This allows you fetch from a specific page e.g. setting page to 1 fetches the first page. |
-| status     | False     | This allows you fetch only transfers with a specific status e.g. fetch all successful transactions. Possible values are failed, successful      |
+| account_bank     | False     | This is the sub-accounts bank ISO code      |
+| account_number     | False     | This is the account number associated with the subaccount you want to fetch      |
+| bank_name     | False     | This is the name of the bank associated with the ISO code provided in account_bankfield      |
