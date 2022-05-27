@@ -9,6 +9,7 @@ use KingFlamez\Rave\Helpers\Beneficiary;
 use KingFlamez\Rave\Helpers\Payments;
 use KingFlamez\Rave\Helpers\Transfers;
 use KingFlamez\Rave\Helpers\Verification;
+use KingFlamez\Rave\Helpers\Subaccount;
 
 /**
  * Flutterwave's Rave payment laravel package
@@ -31,6 +32,7 @@ class Rave
         $this->publicKey = config('flutterwave.publicKey');
         $this->secretKey = config('flutterwave.secretKey');
         $this->secretHash = config('flutterwave.secretHash');
+        $this->encryptionKey = config('flutterwave.encryptionKey');
         $this->baseUrl = 'https://api.flutterwave.com/v3';
     }
 
@@ -82,6 +84,22 @@ class Rave
     }
 
     /**
+     * Reaches out to Flutterwave to validate a charge
+     * @param $data
+     * @return object
+     */
+    public function validateCharge(array $data)
+    {
+
+        $payment = Http::withToken($this->secretKey)->post(
+            $this->baseUrl . '/validate-charge',
+            $data
+        )->json();
+
+        return $payment;
+    }
+
+    /**
      * Reaches out to Flutterwave to verify a transaction
      * @param $id
      * @return object
@@ -118,7 +136,7 @@ class Rave
      */
     public function payments()
     {
-        $payments = new Payments($this->publicKey, $this->secretKey, $this->baseUrl);
+        $payments = new Payments($this->publicKey, $this->secretKey, $this->baseUrl, $this->encryptionKey);
         return $payments;
     }
 
@@ -161,4 +179,15 @@ class Rave
         $verification = new Verification($this->publicKey, $this->secretKey, $this->baseUrl);
         return $verification;
     }
+
+    /**
+     * Subaccounts
+     * @return Subaccount
+     */
+    public function subaccounts()
+    {
+        $subaccount = new Subaccount($this->publicKey, $this->secretKey, $this->baseUrl);
+        return $subaccount;
+    }
+
 }

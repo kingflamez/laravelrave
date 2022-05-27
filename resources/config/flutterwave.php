@@ -28,4 +28,12 @@ return [
      *
      */
     'secretHash' => env('FLW_SECRET_HASH', ''),
+
+    /**
+     * Encryption Key: Your Rave encryptionKey. Sign up on https://dashboard.flutterwave.com/ to get one from your settings page
+     *
+     */
+    'encryptionKey' => env('FLW_ENCRYPTION_KEY', ''),
+
+    
 ];
