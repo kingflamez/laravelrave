@@ -1,7 +1,7 @@
 {
     "name": "kikter/laravelrave",
     "description": "A Laravel 9 Package for Flutterwave Rave",
-    "keywords": ["php","github", "laravel","Open Source","payments", "kingflamez", "Flutterwave Rave", "Flutterwave", "rave", "ravepay.co","laravel 5"],
+    "keywords": ["php","github", "laravel","Open Source","payments", "kingflamez", "Flutterwave Rave", "Flutterwave", "rave", "ravepay.co","laravel 9"],
     "license": "MIT",
     "authors": [
         {
