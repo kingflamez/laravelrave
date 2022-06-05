@@ -1,12 +1,12 @@
 {
-    "name": "kingflamez/laravelrave",
-    "description": "A Laravel 5 Package for Flutterwave Rave",
+    "name": "kikter/laravelrave",
+    "description": "A Laravel 9 Package for Flutterwave Rave",
     "keywords": ["php","github", "laravel","Open Source","payments", "kingflamez", "Flutterwave Rave", "Flutterwave", "rave", "ravepay.co","laravel 5"],
     "license": "MIT",
     "authors": [
         {
-            "name": "kingflamez",
-            "email": "flamekeed@gmail.com"
+            "name": "kikter",
+            "email": "kikter@gmail.com"
         }
     ],
     "minimum-stability": "stable",
