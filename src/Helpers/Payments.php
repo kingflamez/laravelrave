@@ -20,13 +20,12 @@ class Payments
     /**
      * Construct
      */
-    function __construct(String $publicKey, String $secretKey, String $baseUrl, $encryptionKey = '')
+    function __construct(String $publicKey, String $secretKey, String $baseUrl)
     {
 
         $this->publicKey = $publicKey;
         $this->secretKey = $secretKey;
         $this->baseUrl = $baseUrl;
-        $this->encryptionKey = $encryptionKey;
     }
 
 
@@ -216,34 +215,6 @@ class Payments
             $this->baseUrl . '/charges?type=mobile_money_franco',
             $data
         )->json();
-
-        return $payment;
-    }
-
-    /**
-     * Charge via Card
-     * @param $data
-     * @return object
-     */
-    public function card(array $data)
-    {
-        $encryptedData = [];
-        $encryptedData['client'] = Helper::encrypt3Des($data, $this->encryptionKey);
-
-        $payment = Http::withToken($this->secretKey)->post(
-            $this->baseUrl . '/charges?type=card',
-            $encryptedData
-        )->json();
-
-        if ($payment['status'] === 'success') {
-            $result =  [
-                'status' => $payment['status'],
-                'message' => $payment['message'],
-                'data' => $payment['meta']['authorization'],
-            ];
-            $result['data']['flw_ref'] = $payment['data']['flw_ref'];
-            return $result;
-        }
 
         return $payment;
     }

@@ -31,9 +31,7 @@ class RaveServiceProvider extends ServiceProvider
     {
 
         $this->app->singleton('laravelrave', function ($app) {
-
             return new Rave($app->make("request"));
-
         });
 
         $this->app->alias('laravelrave', "KingFlamez\Rave\Rave");

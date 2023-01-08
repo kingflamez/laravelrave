@@ -25,10 +25,7 @@
 - [Abhishek Prakash](https://github.com/abhishek6262)
 - [Wallace Myem Aboiyar](https://github.com/wallacemyem)
 - [Chigozie Ekwonu](https://github.com/chygoz2)
-- [Tolulope Adekunte](https://github.com/adtrex)
-- [Ogaba Emmanuel](https://github.com/ElmageAce)
-- [Sofolahan Eniola (Nattive)](https://github.com/nattive)
-- [Christian Jombo](https://github.com/christianjombo)
+- [Emmanuel Towoju](https://github.com/towoju5)
 
 ## Contributing
 Please feel free to fork this package and contribute by submitting a pull request to enhance the functionalities. I will appreciate that a lot. Also please add your name to the credits.
