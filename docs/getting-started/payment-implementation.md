@@ -69,7 +69,7 @@ class FlutterwaveController extends Controller
             'redirect_url' => route('callback'),
             'customer' => [
                 'email' => request()->email,
-                "phone_number" => request()->phone,
+                "phonenumber" => request()->phone,
                 "name" => request()->name
             ],
 
@@ -96,25 +96,14 @@ class FlutterwaveController extends Controller
      */
     public function callback()
     {
-        
-        $status = request()->status;
 
-        //if payment is successful
-        if ($status ==  'successful') {
-        
         $transactionID = Flutterwave::getTransactionIDFromCallback();
         $data = Flutterwave::verifyTransaction($transactionID);
 
         dd($data);
-        }
-        elseif ($status ==  'cancelled'){
-            //Put desired action/code after transaction has been cancelled here
-        }
-        else{
-            //Put desired action/code after transaction has failed here
-        }
         // Get the transaction from your DB using the transaction reference (txref)
         // Check if you have previously given value for the transaction. If you have, redirect to your successpage else, continue
+        // Confirm that the $data['data']['status'] is 'successful'
         // Confirm that the currency on your db transaction is equal to the returned currency
         // Confirm that the db transaction amount is equal to the returned amount
         // Update the db transaction record (including parameters that didn't exist before the transaction is completed. for audit purpose)
