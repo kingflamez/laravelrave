@@ -1,4 +1,4 @@
-# Flutterwave 🦄🦄 (Laravel 5,7,8 Package)
+# Forked Flutterwave 🦄🦄 (Laravel 5,7,8,9 Package)
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
