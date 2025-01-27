@@ -70,7 +70,7 @@ class FlutterwaveController extends Controller
 
     // if it is a charge event, verify and confirm it is a successful transaction
     if ($verified && $request->event == 'charge.completed' && $request->data->status == 'successful') {
-        $verificationData = Flutterwave::verifyPayment($request->data['id']);
+        $verificationData = Flutterwave::verifyTransaction($request->data['id']);
         if ($verificationData['status'] === 'success') {
         // process for successful charge
 
